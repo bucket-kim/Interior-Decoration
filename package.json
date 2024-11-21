@@ -15,10 +15,13 @@
     "firebase": "^11.0.2",
     "firebase-tools": "^13.25.0",
     "gsap": "^3.12.5",
+    "immer": "^10.1.1",
+    "leva": "^0.9.35",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "styled-components": "^6.1.12",
     "three": "^0.167.1",
+    "valtio": "^2.1.2",
     "zustand": "^4.5.4"
   },
   "devDependencies": {

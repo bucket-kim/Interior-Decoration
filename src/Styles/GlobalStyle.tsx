@@ -1,10 +1,10 @@
-import { createGlobalStyle } from "styled-components";
+import { createGlobalStyle } from 'styled-components';
 
 const GlobalStyle = createGlobalStyle`
 
     #root {
-        height: 100dvh;
-        width: 100dvw;
+    height: 100dvh;
+    width: 100dvw;
     }
 
     body {

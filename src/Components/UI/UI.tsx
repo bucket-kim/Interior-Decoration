@@ -1,9 +1,20 @@
-import React from "react";
-
 const UI = () => {
   return (
     <div>
-      <h1>HI</h1>
+      <button
+        onClick={() => {
+          console.log('floor');
+        }}
+      >
+        Floor
+      </button>
+      <button
+        onClick={() => {
+          console.log('wall');
+        }}
+      >
+        Wall
+      </button>
     </div>
   );
 };
