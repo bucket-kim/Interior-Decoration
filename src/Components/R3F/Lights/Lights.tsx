@@ -1,14 +1,10 @@
-import {
-  AccumulativeShadows,
-  Environment,
-  RandomizedLight,
-} from "@react-three/drei";
-import React, { Fragment } from "react";
+import { Environment } from '@react-three/drei';
+import { Fragment } from 'react';
 
 const Lights = () => {
   return (
     <Fragment>
-      <Environment preset='city' />
+      <Environment preset="city" />
     </Fragment>
   );
 };
