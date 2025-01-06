@@ -6,6 +6,16 @@ const UIModule = ({ set }: globalStateApiType) => {
     setLoaded: (loaded: boolean) => {
       set({ loaded: loaded });
     },
+
+    scaleRoomButtonClick: false,
+    setScaleRoomButtonClick: (scaleRoomButtonClick: boolean) => {
+      set({ scaleRoomButtonClick: scaleRoomButtonClick });
+    },
+
+    interiorData: [],
+    setInteriorData: (interiorData: []) => {
+      set({ interiorData: interiorData });
+    },
   };
 };
 

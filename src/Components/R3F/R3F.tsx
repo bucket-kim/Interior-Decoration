@@ -1,8 +1,10 @@
-import { Center } from '@react-three/drei';
+import { Center, useGLTF } from '@react-three/drei';
 import { Canvas, ThreeEvent } from '@react-three/fiber';
-import { useRef } from 'react';
+import { useEffect, useRef } from 'react';
 import * as THREE from 'three';
 import { proxy } from 'valtio';
+import { shallow } from 'zustand/shallow';
+import { useGlobalState } from '../../State/useGlobalState';
 import Controls from './Controls/Controls';
 import GridFloor from './GridFloor/GridFloor';
 import Lights from './Lights/Lights';
@@ -22,10 +24,41 @@ const R3F = () => {
   const roomGroupRef = useRef<THREE.Group>(null);
   const roomScale = useRef<number>(5);
 
+  const { setInteriorData } = useGlobalState((state) => {
+    return {
+      setInteriorData: state.setInteriorData,
+    };
+  }, shallow);
+
+  const interiorModels = useGLTF('./Models/deco-interior-asset.glb', true);
+
+  useEffect(() => {
+    setInteriorData(
+      interiorModels.scene.children.map((child) => {
+        return child;
+      }),
+    );
+  }, []);
+
+  const { scaleRoomButtonClick, setScaleRoomButtonClick } = useGlobalState(
+    (state) => {
+      return {
+        scaleRoomButtonClick: state.scaleRoomButtonClick,
+        setScaleRoomButtonClick: state.setScaleRoomButtonClick,
+      };
+    },
+    shallow,
+  );
+
   const handleRoomClick = (e: ThreeEvent<MouseEvent>) => {
     if (!roomGroupRef.current) return;
     e.stopPropagation();
-    state.current = roomGroupRef.current.name;
+    setScaleRoomButtonClick(true);
+    if (scaleRoomButtonClick) {
+      state.current = roomGroupRef.current.name;
+    } else {
+      state.current = null;
+    }
   };
 
   const handlePointerMiss = (e: MouseEvent) => {
@@ -42,14 +75,11 @@ const R3F = () => {
         onClick={handleRoomClick}
         onPointerMissed={handlePointerMiss}
         scale={roomScale.current}
-        onUpdate={(e) => {
-          console.log(e);
-        }}
       >
         <RoomFloor />
         <Walls />
       </Center>
-      <Mesh state={state} />
+      <Mesh state={state} interiorModels={interiorModels.scene} />
       <GridFloor />
       <Controls state={state} modes={modes} roomRef={roomGroupRef} />
     </Canvas>

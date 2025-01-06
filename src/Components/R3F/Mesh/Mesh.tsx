@@ -1,20 +1,22 @@
 import { Center } from '@react-three/drei';
 import { ThreeEvent } from '@react-three/fiber';
-import { FC, useRef } from 'react';
+import { FC, Fragment, useRef } from 'react';
 import * as THREE from 'three';
 import { shallow } from 'zustand/shallow';
 import { useGlobalState } from '../../../State/useGlobalState';
 
 interface MeshProps {
   state: any;
+  interiorModels: THREE.Group | THREE.Object3D;
 }
 
-const Mesh: FC<MeshProps> = ({ state }) => {
+const Mesh: FC<MeshProps> = ({ state, interiorModels }) => {
   const furnitureRef = useRef<THREE.Group[]>([]);
 
-  const { boxes } = useGlobalState((state) => {
+  const { boxes, furnitures } = useGlobalState((state) => {
     return {
       boxes: state.boxes,
+      furnitures: state.furnitures,
     };
   }, shallow);
 
@@ -32,7 +34,32 @@ const Mesh: FC<MeshProps> = ({ state }) => {
   };
 
   return (
-    <>
+    <Fragment>
+      {furnitures && furnitures.length > 0
+        ? furnitures.map((furniture, index) => (
+            <Center
+              top
+              key={furniture.id}
+              position={[
+                furniture.position.x,
+                furniture.position.y,
+                furniture.position.z,
+              ]}
+              name={furniture.name}
+              onClick={handlFurnitureClick}
+              onPointerMissed={handlePointerMiss}
+              ref={(el: any) => {
+                furnitureRef.current[index] = el;
+              }}
+            >
+              <primitive
+                object={interiorModels.clone()}
+                scale={1}
+                // You might need to filter/find the correct model based on furniture.modelName
+              />
+            </Center>
+          ))
+        : null}
       {boxes && boxes.length > 0
         ? boxes.map((box, index) => (
             <Center
@@ -54,7 +81,7 @@ const Mesh: FC<MeshProps> = ({ state }) => {
             </Center>
           ))
         : null}
-    </>
+    </Fragment>
   );
 };
 

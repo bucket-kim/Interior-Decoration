@@ -1,4 +1,12 @@
+import * as THREE from 'three';
+
 export interface UIModuleTypes {
   loaded: boolean;
   setLoaded: (loaded: boolean) => void;
+
+  scaleRoomButtonClick: boolean;
+  setScaleRoomButtonClick: (scaleRoomButtonClick: boolean) => void;
+
+  interiorData: [];
+  setInteriorData: (interiorData: THREE.Object3D[]) => void;
 }

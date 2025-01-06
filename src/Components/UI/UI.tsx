@@ -2,40 +2,84 @@ import { MouseEvent } from 'react';
 import { shallow } from 'zustand/shallow';
 import { useGlobalState } from '../../State/useGlobalState';
 
-const UI = () => {
-  // const [arrayNumbers, setArrayNumbers] = useState<string[]>([]);
+interface InteriorItem {
+  name: string;
+  // Add other properties that exist in your data
+}
 
-  const { addBox } = useGlobalState((state) => {
+const UI = () => {
+  const {
+    interiorData,
+    addBox,
+    scaleRoomButtonClick,
+    setScaleRoomButtonClick,
+    addFurnitures,
+  } = useGlobalState((state) => {
     return {
       addBox: state.addBox,
+      interiorData: state.interiorData,
+      scaleRoomButtonClick: state.scaleRoomButtonClick,
+      setScaleRoomButtonClick: state.setScaleRoomButtonClick,
+      addFurnitures: state.addFurnitures,
     };
   }, shallow);
 
   const handleClickSquare = (e: MouseEvent) => {
     e.preventDefault();
-    // const newNumber = (arrayNumbers.length + 1).toString().padStart(3, '0');
-
-    // setArrayNumbers((prev) => [...prev, newNumber]);
     addBox();
   };
 
   return (
     <div>
-      <button onClick={handleClickSquare}>Square</button>
-      <button
+      <button onClick={handleClickSquare}>Desk</button>
+      {interiorData.map((data: InteriorItem) => {
+        return (
+          <button
+            key={data.name}
+            onClick={(e) => {
+              e.preventDefault();
+              const modelName = data.name as string;
+              addFurnitures(modelName);
+            }}
+          >
+            {data.name.replace('_geo', '')}
+          </button>
+        );
+      })}
+      {/* <button
         onClick={() => {
           console.log('wall');
         }}
       >
-        Pyramid
+        Chair
       </button>
       <button
         onClick={() => {
           console.log('wall');
         }}
       >
-        Sphere
+        Bed
       </button>
+      <button
+        onClick={() => {
+          console.log('wall');
+        }}
+      >
+        Table
+      </button>
+      <button
+        onClick={() => {
+          console.log('wall');
+        }}
+      >
+        Sofa
+      </button> */}
+
+      <div style={{ position: 'absolute', top: '0', right: '0' }}>
+        <button onClick={() => setScaleRoomButtonClick(false)}>
+          {scaleRoomButtonClick ? 'Done' : 'Scale Your Room'}
+        </button>
+      </div>
     </div>
   );
 };
