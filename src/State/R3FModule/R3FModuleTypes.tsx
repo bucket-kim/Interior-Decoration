@@ -9,7 +9,7 @@ export interface BoxMesh {
 export interface FurnitureMesh {
   id: string;
   name: string;
-  modelName: string;
+  modelIndex: string;
   position: THREE.Vector3;
 }
 
@@ -20,8 +20,4 @@ export interface R3FModuleTypes {
   furnitures: FurnitureMesh[];
   addFurnitures: (modelName: string) => void;
   removeFurnitures: () => void;
-
-  boxes: BoxMesh[];
-  addBox: () => void;
-  removeBox: () => void;
 }

@@ -13,7 +13,7 @@ const RoomFloor = () => {
       ref={meshRef}
     >
       <planeGeometry />
-      <meshStandardMaterial />
+      <meshStandardMaterial color={'#e6b46f'} />
     </mesh>
   );
 };

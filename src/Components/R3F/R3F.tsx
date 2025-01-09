@@ -66,7 +66,7 @@ const R3F = () => {
   };
 
   return (
-    <Canvas camera={{ position: [6, 5, 8], fov: 35 }} dpr={[1, 2]}>
+    <Canvas camera={{ position: [6, 5, 8], fov: 35 }} dpr={[1, 2]} shadows>
       <Lights />
       <Center
         top
@@ -75,6 +75,8 @@ const R3F = () => {
         onClick={handleRoomClick}
         onPointerMissed={handlePointerMiss}
         scale={roomScale.current}
+        receiveShadow
+        castShadow
       >
         <RoomFloor />
         <Walls />

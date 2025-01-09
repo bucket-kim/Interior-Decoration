@@ -1,21 +1,25 @@
 import { Center } from '@react-three/drei';
 import { ThreeEvent } from '@react-three/fiber';
-import { FC, Fragment, useRef } from 'react';
+import { FC, Fragment, useEffect, useRef, useState } from 'react';
 import * as THREE from 'three';
+import { useSnapshot } from 'valtio';
 import { shallow } from 'zustand/shallow';
 import { useGlobalState } from '../../../State/useGlobalState';
 
 interface MeshProps {
   state: any;
-  interiorModels: THREE.Group | THREE.Object3D;
+  interiorModels: THREE.Group;
 }
 
 const Mesh: FC<MeshProps> = ({ state, interiorModels }) => {
   const furnitureRef = useRef<THREE.Group[]>([]);
 
-  const { boxes, furnitures } = useGlobalState((state) => {
+  const snap = useSnapshot(state);
+
+  const [modelMap, setModelMap] = useState<Record<string, THREE.Object3D>>({});
+
+  const { furnitures } = useGlobalState((state) => {
     return {
-      boxes: state.boxes,
       furnitures: state.furnitures,
     };
   }, shallow);
@@ -23,9 +27,20 @@ const Mesh: FC<MeshProps> = ({ state, interiorModels }) => {
   const handlFurnitureClick = (e: ThreeEvent<MouseEvent>) => {
     if (!furnitureRef.current) return;
     e.stopPropagation();
+    const findFurniture = furnitureRef.current.find((furniture) => {
+      return furniture.name === e.object.name;
+    });
+
+    if (findFurniture) {
+      state.current = findFurniture.name;
+    }
+  };
+
+  const handleContextMenu = (e: ThreeEvent<MouseEvent>) => {
+    if (!furnitureRef.current) return;
+    e.stopPropagation();
     furnitureRef.current.map((furniture) => {
-      state.current = furniture.name;
-      console.log(state.current);
+      snap.current === furniture.name && (state.mode = (snap.mode + 1) % 3);
     });
   };
 
@@ -33,53 +48,66 @@ const Mesh: FC<MeshProps> = ({ state, interiorModels }) => {
     e.type === 'click' && (state.current = null);
   };
 
+  useEffect(() => {
+    if (!interiorModels) return;
+
+    const newModelMap: Record<string, THREE.Object3D> = {};
+
+    (interiorModels as unknown as THREE.Group).traverse((child) => {
+      if (child instanceof THREE.Mesh) {
+        newModelMap[child.name] = child;
+      }
+    });
+
+    setModelMap(newModelMap);
+  }, [interiorModels]);
+
   return (
     <Fragment>
       {furnitures && furnitures.length > 0
-        ? furnitures.map((furniture, index) => (
-            <Center
-              top
-              key={furniture.id}
-              position={[
-                furniture.position.x,
-                furniture.position.y,
-                furniture.position.z,
-              ]}
-              name={furniture.name}
-              onClick={handlFurnitureClick}
-              onPointerMissed={handlePointerMiss}
-              ref={(el: any) => {
-                furnitureRef.current[index] = el;
-              }}
-            >
-              <primitive
-                object={interiorModels.clone()}
-                scale={1}
-                // You might need to filter/find the correct model based on furniture.modelName
-              />
-            </Center>
-          ))
-        : null}
-      {boxes && boxes.length > 0
-        ? boxes.map((box, index) => (
-            <Center
-              top
-              key={box.id}
-              position={[box.position.x, box.position.y, box.position.z]}
-              name={box.name}
-              onClick={handlFurnitureClick}
-              onPointerMissed={handlePointerMiss}
-              ref={(el: any) => {
-                // if (!furnitureRef.current) return;
-                furnitureRef.current[index] = el;
-              }}
-            >
-              <mesh>
-                <boxGeometry />
-                <meshNormalMaterial />
-              </mesh>
-            </Center>
-          ))
+        ? furnitures.map((furniture, index) => {
+            const model = modelMap[furniture.name] as THREE.Mesh;
+            if (!model) return;
+            return (
+              <Center
+                receiveShadow
+                castShadow
+                top
+                key={furniture.id}
+                position={[
+                  furniture.position.x,
+                  furniture.position.y,
+                  furniture.position.z,
+                ]}
+                name={furniture.name}
+                onContextMenu={handleContextMenu}
+                onClick={handlFurnitureClick}
+                onPointerMissed={handlePointerMiss}
+                ref={(el: any) => {
+                  furnitureRef.current[index] = el;
+                }}
+              >
+                <mesh
+                  castShadow
+                  receiveShadow
+                  geometry={model.geometry}
+                  scale={0.5}
+                >
+                  {/* <primitive
+                    object={model.clone()}
+                    scale={0.5}
+                    material={
+                      new THREE.MeshStandardMaterial({
+                        color: '#ffffff',
+                        side: THREE.DoubleSide,
+                      })
+                    }
+                  /> */}
+                  <meshStandardMaterial />
+                </mesh>
+              </Center>
+            );
+          })
         : null}
     </Fragment>
   );

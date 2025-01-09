@@ -54,13 +54,7 @@ const Controls: FC<ControlsProps> = ({ state, modes, roomRef }) => {
         <TransformControls
           ref={transformRef}
           object={scene.getObjectByName(snap.current)}
-          mode={
-            snap.current === 'floor'
-              ? 'scale'
-              : snap.current.includes('square')
-                ? 'translate'
-                : modes[snap.mode]
-          }
+          mode={snap.current === 'floor' ? 'scale' : modes[snap.mode]}
           rotationSnap={Math.PI / 4}
           showY={snap.current === 'room001' ? false : true}
         />

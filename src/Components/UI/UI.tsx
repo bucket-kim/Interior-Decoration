@@ -1,4 +1,3 @@
-import { MouseEvent } from 'react';
 import { shallow } from 'zustand/shallow';
 import { useGlobalState } from '../../State/useGlobalState';
 
@@ -10,13 +9,11 @@ interface InteriorItem {
 const UI = () => {
   const {
     interiorData,
-    addBox,
     scaleRoomButtonClick,
     setScaleRoomButtonClick,
     addFurnitures,
   } = useGlobalState((state) => {
     return {
-      addBox: state.addBox,
       interiorData: state.interiorData,
       scaleRoomButtonClick: state.scaleRoomButtonClick,
       setScaleRoomButtonClick: state.setScaleRoomButtonClick,
@@ -24,14 +21,8 @@ const UI = () => {
     };
   }, shallow);
 
-  const handleClickSquare = (e: MouseEvent) => {
-    e.preventDefault();
-    addBox();
-  };
-
   return (
     <div>
-      <button onClick={handleClickSquare}>Desk</button>
       {interiorData.map((data: InteriorItem) => {
         return (
           <button
