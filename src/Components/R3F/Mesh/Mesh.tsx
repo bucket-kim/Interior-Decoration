@@ -87,13 +87,7 @@ const Mesh: FC<MeshProps> = ({ state, interiorModels }) => {
                   furnitureRef.current[index] = el;
                 }}
               >
-                <mesh
-                  castShadow
-                  receiveShadow
-                  geometry={model.geometry}
-                  scale={0.5}
-                >
-                  {/* <primitive
+                {/* <primitive
                     object={model.clone()}
                     scale={0.5}
                     material={
@@ -103,6 +97,13 @@ const Mesh: FC<MeshProps> = ({ state, interiorModels }) => {
                       })
                     }
                   /> */}
+                <mesh
+                  name={furniture.name}
+                  castShadow
+                  receiveShadow
+                  geometry={model.geometry}
+                  scale={0.5}
+                >
                   <meshStandardMaterial />
                 </mesh>
               </Center>
