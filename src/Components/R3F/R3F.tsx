@@ -1,5 +1,5 @@
 import { Center, useGLTF } from '@react-three/drei';
-import { Canvas, ThreeEvent } from '@react-three/fiber';
+import { Canvas } from '@react-three/fiber';
 import { useEffect, useRef } from 'react';
 import * as THREE from 'three';
 import { proxy } from 'valtio';
@@ -17,7 +17,7 @@ interface State {
   mode: number;
 }
 
-const modes = ['scale', 'translate', 'rotate'];
+const modes = ['translate', 'rotate'];
 const state = proxy<State>({ current: null, mode: 0 });
 
 const R3F = () => {
@@ -40,40 +40,27 @@ const R3F = () => {
     );
   }, []);
 
-  const { scaleRoomButtonClick, setScaleRoomButtonClick } = useGlobalState(
-    (state) => {
-      return {
-        scaleRoomButtonClick: state.scaleRoomButtonClick,
-        setScaleRoomButtonClick: state.setScaleRoomButtonClick,
-      };
-    },
-    shallow,
-  );
+  const { scaleRoomButtonClick } = useGlobalState((state) => {
+    return {
+      scaleRoomButtonClick: state.scaleRoomButtonClick,
+    };
+  }, shallow);
 
-  const handleRoomClick = (e: ThreeEvent<MouseEvent>) => {
+  useEffect(() => {
     if (!roomGroupRef.current) return;
-    e.stopPropagation();
-    setScaleRoomButtonClick(true);
-    if (scaleRoomButtonClick) {
-      state.current = roomGroupRef.current.name;
-    } else {
-      state.current = null;
-    }
-  };
 
-  const handlePointerMiss = (e: MouseEvent) => {
-    e.type === 'click' && (state.current = null);
-  };
+    scaleRoomButtonClick
+      ? (state.current = roomGroupRef.current.name)
+      : (state.current = null);
+  }, [scaleRoomButtonClick]);
 
   return (
     <Canvas camera={{ position: [6, 5, 8], fov: 35 }} dpr={[1, 2]} shadows>
       <Lights />
       <Center
         top
-        name="room001"
+        name="Room_Geo"
         ref={roomGroupRef}
-        onClick={handleRoomClick}
-        onPointerMissed={handlePointerMiss}
         scale={roomScale.current}
         receiveShadow
         castShadow

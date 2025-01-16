@@ -28,6 +28,7 @@ const Mesh: FC<MeshProps> = ({ state, interiorModels }) => {
     if (!furnitureRef.current) return;
     e.stopPropagation();
     const findFurniture = furnitureRef.current.find((furniture) => {
+      console.log(e.object.name);
       return furniture.name === e.object.name;
     });
 
@@ -79,7 +80,7 @@ const Mesh: FC<MeshProps> = ({ state, interiorModels }) => {
                   furniture.position.y,
                   furniture.position.z,
                 ]}
-                name={furniture.name}
+                name={`${furniture.modelIndex}`}
                 onContextMenu={handleContextMenu}
                 onClick={handlFurnitureClick}
                 onPointerMissed={handlePointerMiss}
@@ -87,18 +88,8 @@ const Mesh: FC<MeshProps> = ({ state, interiorModels }) => {
                   furnitureRef.current[index] = el;
                 }}
               >
-                {/* <primitive
-                    object={model.clone()}
-                    scale={0.5}
-                    material={
-                      new THREE.MeshStandardMaterial({
-                        color: '#ffffff',
-                        side: THREE.DoubleSide,
-                      })
-                    }
-                  /> */}
                 <mesh
-                  name={furniture.name}
+                  name={furniture.modelIndex}
                   castShadow
                   receiveShadow
                   geometry={model.geometry}

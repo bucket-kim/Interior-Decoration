@@ -54,9 +54,9 @@ const Controls: FC<ControlsProps> = ({ state, modes, roomRef }) => {
         <TransformControls
           ref={transformRef}
           object={scene.getObjectByName(snap.current)}
-          mode={snap.current === 'floor' ? 'scale' : modes[snap.mode]}
+          mode={snap.current === 'Room_Geo' ? 'scale' : modes[snap.mode]}
           rotationSnap={Math.PI / 4}
-          showY={snap.current === 'room001' ? false : true}
+          showY={snap.current === 'Room_Geo' ? false : true}
         />
       )}
       <OrbitControls makeDefault maxPolarAngle={Math.PI / 1.75} />

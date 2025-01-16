@@ -1,3 +1,5 @@
+import { MouseEvent } from 'react';
+import { proxy } from 'valtio';
 import { shallow } from 'zustand/shallow';
 import { useGlobalState } from '../../State/useGlobalState';
 
@@ -5,6 +7,13 @@ interface InteriorItem {
   name: string;
   // Add other properties that exist in your data
 }
+
+interface State {
+  current: string | null;
+  mode: number;
+}
+
+const state = proxy<State>({ current: null, mode: 0 });
 
 const UI = () => {
   const {
@@ -20,6 +29,16 @@ const UI = () => {
       addFurnitures: state.addFurnitures,
     };
   }, shallow);
+
+  const handleScaleRoomClick = (e: MouseEvent) => {
+    e.preventDefault();
+    setScaleRoomButtonClick(true);
+  };
+
+  const handleDoneClick = (e: MouseEvent) => {
+    e.preventDefault();
+    setScaleRoomButtonClick(false);
+  };
 
   return (
     <div>
@@ -37,39 +56,13 @@ const UI = () => {
           </button>
         );
       })}
-      {/* <button
-        onClick={() => {
-          console.log('wall');
-        }}
-      >
-        Chair
-      </button>
-      <button
-        onClick={() => {
-          console.log('wall');
-        }}
-      >
-        Bed
-      </button>
-      <button
-        onClick={() => {
-          console.log('wall');
-        }}
-      >
-        Table
-      </button>
-      <button
-        onClick={() => {
-          console.log('wall');
-        }}
-      >
-        Sofa
-      </button> */}
 
       <div style={{ position: 'absolute', top: '0', right: '0' }}>
-        <button onClick={() => setScaleRoomButtonClick(false)}>
-          {scaleRoomButtonClick ? 'Done' : 'Scale Your Room'}
-        </button>
+        {!scaleRoomButtonClick ? (
+          <button onClick={handleScaleRoomClick}>Scale Your Room</button>
+        ) : (
+          <button onClick={handleDoneClick}>Done</button>
+        )}
       </div>
     </div>
   );
