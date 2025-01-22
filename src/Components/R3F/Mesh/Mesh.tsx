@@ -77,7 +77,7 @@ const Mesh: FC<MeshProps> = ({ state, interiorModels }) => {
                 key={furniture.id}
                 position={[
                   furniture.position.x,
-                  furniture.position.y,
+                  furniture.position.y + 0.25,
                   furniture.position.z,
                 ]}
                 name={`${furniture.modelIndex}`}
