@@ -1,6 +1,8 @@
-import { Lock, Mail } from 'lucide-react';
 import { ChangeEvent, FC, FormEvent, useState } from 'react';
+import { useAuth } from '../../../../context/AuthProvider';
 import LoginSignUpStyleContainer from './LoginSignUpStyleContainer';
+import SocialsAuth from './SocialsAuth/SocialsAuth';
+import UserInput from './UserInput/UserInput';
 
 interface LoginSignUpProps {
   // loginClick: boolean;
@@ -16,7 +18,10 @@ interface UsersType {
 }
 
 const LoginSignUp: FC<LoginSignUpProps> = ({ setLoginClick }) => {
+  const { login } = useAuth();
   const [isSignUp, setIsSignUp] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const [formData, setFormData] = useState<UsersType>({
     firstName: '',
     lastName: '',
@@ -37,151 +42,129 @@ const LoginSignUp: FC<LoginSignUpProps> = ({ setLoginClick }) => {
     }));
   };
 
-  const handleFormSubmit = (e: FormEvent) => {
+  const handleFormSubmit = async (e: FormEvent) => {
     e.preventDefault();
-    if (isSignUp) {
-      console.log(`Sign up data: `, formData);
-    } else {
-      console.log('Login Data: ', {
-        email: formData.email,
-        password: formData.password,
-      });
-    }
-  };
+    setIsLoading(true);
+    setError(null);
 
-  const handleSocialLogin = (provider: string) => {
-    // Handle social login
-    console.log(`Logging in with ${provider}`);
+    try {
+      const endpoint = isSignUp ? '/auth/register' : '/auth/login';
+      const response = await fetch(
+        `${import.meta.env.VITE_BACKEND_URL}/${endpoint}`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(formData),
+        },
+      );
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error('Sign up failed');
+      }
+
+      localStorage.setItem('token', data.accessToken);
+
+      if (data.user) {
+        localStorage.setItem('user', JSON.stringify(data.user));
+      }
+
+      console.log(`${isSignUp ? 'Sign up' : 'Login'} successful:`, data);
+
+      login(data.accessToken, data.user);
+      setLoginClick(false);
+    } catch (error) {
+      setError(
+        error instanceof Error ? error.message : 'An unknown error occurred',
+      );
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
     <LoginSignUpStyleContainer>
       <div className="signin-container">
         <button onClick={handleCloseClick}>x</button>
+        {error && <p className="text-red-500">{error}</p>}
         <form onSubmit={handleFormSubmit}>
           {isSignUp && (
             <>
-              <div className="relative">
-                <input
-                  type="text"
-                  name="firstName"
-                  placeholder="First Name"
-                  value={formData.firstName}
-                  onChange={handleInputChange}
-                  className="w-full pl-4 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                  required
-                />
-              </div>
+              <UserInput
+                name="firstName"
+                value={formData.firstName}
+                onChange={handleInputChange}
+                placeholder="first name"
+              />
+              <UserInput
+                name="lastName"
+                value={formData.lastName}
+                onChange={handleInputChange}
+                placeholder="last name"
+              />
 
-              <div className="relative">
-                <input
-                  type="text"
-                  name="lastName"
-                  placeholder="Last Name"
-                  value={formData.lastName}
-                  onChange={handleInputChange}
-                  className="w-full pl-4 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                  required
-                />
-              </div>
-
-              <div className="relative">
-                <input
-                  type="tel"
-                  name="phone"
-                  placeholder="Phone Number"
-                  value={formData.phone}
-                  onChange={handleInputChange}
-                  className="w-full pl-4 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                  required
-                />
-              </div>
+              <UserInput
+                name="phone"
+                value={formData.phone}
+                onChange={handleInputChange}
+                placeholder="phone number"
+              />
             </>
           )}
-          <div className="relative">
-            <Mail
-              className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"
-              size={20}
-            />
-            <input
-              type="email"
-              name="email"
-              placeholder="Email Address"
-              value={formData.email}
-              onChange={handleInputChange}
-              className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-              required
-            />
-          </div>
+          <UserInput
+            name="email"
+            value={formData.email}
+            onChange={handleInputChange}
+            placeholder="Email"
+          />
 
-          <div className="relative">
-            <Lock
-              className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"
-              size={20}
-            />
-            <input
-              type="password"
-              name="password"
-              placeholder="Password"
-              value={formData.password}
-              onChange={handleInputChange}
-              className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-              required
-            />
-          </div>
+          <UserInput
+            name="password"
+            value={formData.password}
+            onChange={handleInputChange}
+            placeholder="password"
+          />
 
           <button
             type="submit"
+            disabled={isLoading}
             className="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition-colors"
           >
-            {isSignUp ? 'Sign Up' : 'Sign In'}
+            {isLoading ? (
+              <span className="inline-flex items-center">
+                <svg
+                  className="animate-spin -ml-1 mr-3 h-5 w-5 text-white"
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                >
+                  <circle
+                    className="opacity-25"
+                    cx="12"
+                    cy="12"
+                    r="10"
+                    stroke="currentColor"
+                    strokeWidth="4"
+                  ></circle>
+                  <path
+                    className="opacity-75"
+                    fill="currentColor"
+                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                  ></path>
+                </svg>
+                Processing...
+              </span>
+            ) : isSignUp ? (
+              'Sign Up'
+            ) : (
+              'Log In'
+            )}
           </button>
         </form>
-        <div className="mt-6">
-          <div className="relative">
-            <div className="absolute inset-0 flex items-center">
-              <div className="w-full border-t border-gray-300"></div>
-            </div>
-            <div className="relative flex justify-center text-sm">
-              <span className="px-2 bg-white text-gray-500">
-                Or continue with
-              </span>
-            </div>
-          </div>
 
-          <div className="mt-6 grid grid-cols-3 gap-3">
-            <button
-              onClick={() => handleSocialLogin('google')}
-              className="w-full flex justify-center py-2 px-4 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
-            >
-              <img
-                src="/api/placeholder/20/20"
-                alt="Google"
-                className="w-5 h-5"
-              />
-            </button>
-            <button
-              onClick={() => handleSocialLogin('facebook')}
-              className="w-full flex justify-center py-2 px-4 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
-            >
-              <img
-                src="/api/placeholder/20/20"
-                alt="Facebook"
-                className="w-5 h-5"
-              />
-            </button>
-            <button
-              onClick={() => handleSocialLogin('apple')}
-              className="w-full flex justify-center py-2 px-4 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
-            >
-              <img
-                src="/api/placeholder/20/20"
-                alt="Apple"
-                className="w-5 h-5"
-              />
-            </button>
-          </div>
-        </div>
+        <SocialsAuth />
 
         <p className="mt-8 text-center text-sm text-gray-600">
           {isSignUp ? 'Already have an account?' : "Don't have an account?"}{' '}
@@ -189,7 +172,7 @@ const LoginSignUp: FC<LoginSignUpProps> = ({ setLoginClick }) => {
             onClick={() => setIsSignUp(!isSignUp)}
             className="text-blue-600 hover:text-blue-700 font-medium"
           >
-            {isSignUp ? 'Sign in' : 'Sign up'}
+            {isSignUp ? 'Sign In' : 'Sign up'}
           </button>
         </p>
       </div>

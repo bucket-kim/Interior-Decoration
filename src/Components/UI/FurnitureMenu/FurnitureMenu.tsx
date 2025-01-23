@@ -30,6 +30,17 @@ const FurnitureMenu = () => {
           </button>
         );
       })}
+      <p
+        style={{
+          fontSize: '1rem',
+          display: 'flex',
+          flexDirection: 'column',
+          gap: '5px',
+        }}
+      >
+        <span>click on a furniture to transform</span>
+        <span>Middle Mouse Button to change transform mode</span>
+      </p>
     </FurnitureMenuStyleContainer>
   );
 };

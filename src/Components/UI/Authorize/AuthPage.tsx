@@ -1,21 +1,30 @@
-import { MouseEvent, useState } from 'react';
+import { MouseEvent, useEffect, useState } from 'react';
+import { useAuth } from '../../../context/AuthProvider';
 import LoginSignUp from './LoginSignUp/LoginSignUp';
 
 const AuthPage = () => {
+  const { token, user, logout } = useAuth();
   const [loginClick, setLoginClick] = useState(false);
-  const [isSignUp, setIsSignUp] = useState(false);
-  const [name, setName] = useState('');
 
   const handleLoginClick = (e: MouseEvent) => {
     e.preventDefault();
     setLoginClick(true);
   };
 
+  const handleLogoutClick = () => {
+    logout();
+  };
+
+  useEffect(() => {
+    console.log(token, user);
+  }, []);
+
   return (
     <div>
-      {isSignUp ? (
+      {user ? (
         <div className="relative">
-          <h2>Hi, {name}!</h2>
+          <h2>Hi, {user.firstName}!</h2>
+          <button onClick={handleLogoutClick}>Logout</button>
         </div>
       ) : (
         <button onClick={handleLoginClick}>Login / Sign up</button>
