@@ -9,7 +9,7 @@ const R3FModule = ({ set }: globalStateApiType) => {
       set({ meshClick: meshClick });
     },
 
-    furnitures: [],
+    furnitures: [] as FurnitureMesh[],
     addFurnitures: (modelName: string) =>
       set((state) => {
         const newMesh: FurnitureMesh = {

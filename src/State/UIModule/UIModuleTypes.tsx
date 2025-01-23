@@ -7,6 +7,6 @@ export interface UIModuleTypes {
   scaleRoomButtonClick: boolean;
   setScaleRoomButtonClick: (scaleRoomButtonClick: boolean) => void;
 
-  interiorData: [];
+  interiorData: THREE.Object3D[];
   setInteriorData: (interiorData: THREE.Object3D[]) => void;
 }

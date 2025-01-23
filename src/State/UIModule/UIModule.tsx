@@ -1,3 +1,4 @@
+import * as THREE from 'three';
 import { globalStateApiType } from '../GlobalStateTypes';
 
 const UIModule = ({ set }: globalStateApiType) => {
@@ -12,8 +13,8 @@ const UIModule = ({ set }: globalStateApiType) => {
       set({ scaleRoomButtonClick: scaleRoomButtonClick });
     },
 
-    interiorData: [],
-    setInteriorData: (interiorData: []) => {
+    interiorData: [] as THREE.Object3D[],
+    setInteriorData: (interiorData: THREE.Object3D[]) => {
       set({ interiorData: interiorData });
     },
   };

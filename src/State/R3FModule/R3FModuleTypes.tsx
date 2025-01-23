@@ -19,5 +19,4 @@ export interface R3FModuleTypes {
 
   furnitures: FurnitureMesh[];
   addFurnitures: (modelName: string) => void;
-  // removeFurnitures: (modelName: string) => void;
 }
