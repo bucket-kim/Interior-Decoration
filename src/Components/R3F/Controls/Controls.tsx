@@ -29,10 +29,19 @@ const Controls: FC<ControlsProps> = ({ state, modes, roomRef }) => {
       const roomBound = new THREE.Box3().setFromObject(roomRef.current);
       const roomSize = roomBound.getSize(new THREE.Vector3());
 
-      const maxX = roomSize.x / 2 - object.scale.x / 2;
-      const maxZ = roomSize.z / 2 - object.scale.z / 2;
+      const objectBound = new THREE.Box3().setFromObject(object);
+      const objectSize = objectBound.getSize(new THREE.Vector3());
+      const actualScale = {
+        x: objectSize.x / 2,
+        y: objectSize.y / 2,
+        z: objectSize.z / 2,
+      };
+
+      const maxX = roomSize.x / 2 - (actualScale.x + 0.05);
+      const maxZ = roomSize.z / 2 - (actualScale.z + 0.05);
 
       const newPosition = object.position.clone();
+
       newPosition.x = THREE.MathUtils.clamp(newPosition.x, -maxX, maxX);
       newPosition.z = THREE.MathUtils.clamp(newPosition.z, -maxZ, maxZ);
 

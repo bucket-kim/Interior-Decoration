@@ -33,6 +33,7 @@ const R3F = () => {
   const interiorModels = useGLTF('./Models/deco-interior-asset.glb', true);
 
   useEffect(() => {
+    interiorModels.scene.updateMatrixWorld(true);
     setInteriorData(
       interiorModels.scene.children.map((child) => {
         return child;

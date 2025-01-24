@@ -28,7 +28,6 @@ const Mesh: FC<MeshProps> = ({ state, interiorModels }) => {
     if (!furnitureRef.current) return;
     e.stopPropagation();
     const findFurniture = furnitureRef.current.find((furniture) => {
-      console.log(e.object.name);
       return furniture.name === e.object.name;
     });
 
@@ -84,6 +83,7 @@ const Mesh: FC<MeshProps> = ({ state, interiorModels }) => {
                 onContextMenu={handleContextMenu}
                 onClick={handlFurnitureClick}
                 onPointerMissed={handlePointerMiss}
+                scale={0.5}
                 ref={(el: any) => {
                   furnitureRef.current[index] = el;
                 }}
@@ -93,7 +93,7 @@ const Mesh: FC<MeshProps> = ({ state, interiorModels }) => {
                   castShadow
                   receiveShadow
                   geometry={model.geometry}
-                  scale={0.5}
+                  // scale={0.5}
                 >
                   <meshStandardMaterial />
                 </mesh>
