@@ -18,9 +18,10 @@ const Mesh: FC<MeshProps> = ({ state, interiorModels }) => {
 
   const [modelMap, setModelMap] = useState<Record<string, THREE.Object3D>>({});
 
-  const { furnitures } = useGlobalState((state) => {
+  const { furnitures, updateFurniturePosition } = useGlobalState((state) => {
     return {
       furnitures: state.furnitures,
+      updateFurniturePosition: state.updateFurniturePosition,
     };
   }, shallow);
 
@@ -62,6 +63,22 @@ const Mesh: FC<MeshProps> = ({ state, interiorModels }) => {
     setModelMap(newModelMap);
   }, [interiorModels]);
 
+  useEffect(() => {
+    if (!furnitureRef.current) return;
+
+    furnitureRef.current.forEach((furniture, index) => {
+      if (furniture && furnitures[index]) {
+        // Only update if position has actually changed
+        if (furniture.position !== furnitures[index].position) {
+          updateFurniturePosition(
+            furnitures[index].modelIndex,
+            furniture.position,
+          );
+        }
+      }
+    });
+  }, [furnitureRef.current]);
+
   return (
     <Fragment>
       {furnitures && furnitures.length > 0
@@ -76,7 +93,7 @@ const Mesh: FC<MeshProps> = ({ state, interiorModels }) => {
                 key={furniture.id}
                 position={[
                   furniture.position.x,
-                  furniture.position.y + 0.25,
+                  furniture.position.y,
                   furniture.position.z,
                 ]}
                 name={`${furniture.modelIndex}`}

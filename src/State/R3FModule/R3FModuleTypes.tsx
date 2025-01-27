@@ -13,4 +13,9 @@ export interface R3FModuleTypes {
 
   furnitures: FurnitureMesh[];
   addFurnitures: (modelName: string) => void;
+
+  updateFurniturePosition: (
+    modelIndex: string,
+    newPosition: THREE.Vector3,
+  ) => void;
 }

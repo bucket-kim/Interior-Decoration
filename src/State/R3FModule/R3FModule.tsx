@@ -16,10 +16,19 @@ const R3FModule = ({ set }: globalStateApiType) => {
           id: crypto.randomUUID(),
           name: modelName,
           modelIndex: `${modelName}_${(state.furnitures.length + 1).toString().padStart(3, '0')}`,
-          position: new THREE.Vector3(0, 0, 0),
+          position: new THREE.Vector3(0, 0.25, 0),
         };
         return { furnitures: [...state.furnitures, newMesh] };
       }),
+
+    updateFurniturePosition: (modelIndex: string, position: THREE.Vector3) =>
+      set((state) => ({
+        furnitures: state.furnitures.map((furniture) =>
+          furniture.modelIndex === modelIndex
+            ? { ...furniture, position: position.clone() }
+            : furniture,
+        ),
+      })),
   };
 };
 

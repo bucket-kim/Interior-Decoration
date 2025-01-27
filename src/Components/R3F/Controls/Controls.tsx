@@ -3,6 +3,8 @@ import { useThree } from '@react-three/fiber';
 import { ElementRef, FC, Fragment, RefObject, useEffect, useRef } from 'react';
 import * as THREE from 'three';
 import { useSnapshot } from 'valtio';
+import { shallow } from 'zustand/shallow';
+import { useGlobalState } from '../../../State/useGlobalState';
 
 interface ControlsProps {
   state: any;
@@ -13,6 +15,11 @@ interface ControlsProps {
 const Controls: FC<ControlsProps> = ({ state, modes, roomRef }) => {
   const snap = useSnapshot(state);
   const scene = useThree((state) => state.scene);
+  const { updateFurniturePosition } = useGlobalState((state) => {
+    return {
+      updateFurniturePosition: state.updateFurniturePosition,
+    };
+  }, shallow);
 
   const transformRef = useRef<ElementRef<typeof TransformControls>>(null);
 
@@ -47,6 +54,7 @@ const Controls: FC<ControlsProps> = ({ state, modes, roomRef }) => {
 
       if (!object.position.equals(newPosition)) {
         object.position.copy(newPosition);
+        // updateFurniturePosition(snap.current, newPosition);
       }
     };
 
@@ -55,7 +63,7 @@ const Controls: FC<ControlsProps> = ({ state, modes, roomRef }) => {
     return () => {
       controls.removeEventListener('objectChange', handleTransform);
     };
-  }, [snap.current, roomRef, scene]);
+  }, [snap.current, roomRef, scene, updateFurniturePosition]);
 
   return (
     <Fragment>
