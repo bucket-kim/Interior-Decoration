@@ -5,6 +5,7 @@ import * as THREE from 'three';
 import { useSnapshot } from 'valtio';
 import { shallow } from 'zustand/shallow';
 import { useGlobalState } from '../../../State/useGlobalState';
+import MeshControls from './MeshControls/MeshControls';
 
 interface MeshProps {
   state: any;
@@ -25,28 +26,18 @@ const Mesh: FC<MeshProps> = ({ state, interiorModels }) => {
     };
   }, shallow);
 
-  const handlFurnitureClick = (e: ThreeEvent<MouseEvent>) => {
-    if (!furnitureRef.current) return;
-    e.stopPropagation();
-    const findFurniture = furnitureRef.current.find((furniture) => {
-      return furniture.name === e.object.name;
-    });
+  const { furnitureClick, contextMenu, pointerMiss } = MeshControls();
 
-    if (findFurniture) {
-      state.current = findFurniture.name;
-    }
+  const handleFurnitureClick = (e: ThreeEvent<MouseEvent>) => {
+    furnitureClick(e, furnitureRef, state);
   };
 
   const handleContextMenu = (e: ThreeEvent<MouseEvent>) => {
-    if (!furnitureRef.current) return;
-    e.stopPropagation();
-    furnitureRef.current.map((furniture) => {
-      snap.current === furniture.name && (state.mode = (snap.mode + 1) % 3);
-    });
+    contextMenu(e, furnitureRef, snap, state);
   };
 
   const handlePointerMiss = (e: MouseEvent) => {
-    e.type === 'click' && (state.current = null);
+    pointerMiss(e, state);
   };
 
   useEffect(() => {
@@ -98,7 +89,7 @@ const Mesh: FC<MeshProps> = ({ state, interiorModels }) => {
                 ]}
                 name={`${furniture.modelIndex}`}
                 onContextMenu={handleContextMenu}
-                onClick={handlFurnitureClick}
+                onClick={handleFurnitureClick}
                 onPointerMissed={handlePointerMiss}
                 scale={0.5}
                 ref={(el: any) => {
