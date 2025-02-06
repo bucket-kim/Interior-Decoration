@@ -1,5 +1,4 @@
 import { ChangeEvent, FC, FormEvent, useState } from 'react';
-import { useAuth } from '../../../../context/AuthProvider';
 import LoginSignUpStyleContainer from './LoginSignUpStyleContainer';
 import SocialsAuth from './SocialsAuth/SocialsAuth';
 import UserInput from './UserInput/UserInput';
@@ -16,9 +15,9 @@ interface UsersType {
   password: string;
   phone: string;
 }
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8080/api';
 
 const LoginSignUp: FC<LoginSignUpProps> = ({ setLoginClick }) => {
-  const { login } = useAuth();
   const [isSignUp, setIsSignUp] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -49,18 +48,14 @@ const LoginSignUp: FC<LoginSignUpProps> = ({ setLoginClick }) => {
 
     try {
       const endpoint = isSignUp ? '/auth/register' : '/auth/login';
-      const response = await fetch(
-        `${import.meta.env.VITE_BACKEND_URL}/${endpoint}`,
-        {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify(formData),
+      const response = await fetch(`${API_URL}${endpoint}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
         },
-      );
+        body: JSON.stringify(formData),
+      });
       const data = await response.json();
-
       if (!response.ok) {
         throw new Error('Sign up failed');
       }
@@ -71,9 +66,6 @@ const LoginSignUp: FC<LoginSignUpProps> = ({ setLoginClick }) => {
         localStorage.setItem('user', JSON.stringify(data.user));
       }
 
-      console.log(`${isSignUp ? 'Sign up' : 'Login'} successful:`, data);
-
-      login(data.accessToken, data.user);
       setLoginClick(false);
     } catch (error) {
       setError(

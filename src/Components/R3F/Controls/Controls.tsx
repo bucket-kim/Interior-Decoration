@@ -15,11 +15,15 @@ interface ControlsProps {
 const Controls: FC<ControlsProps> = ({ state, modes, roomRef }) => {
   const snap = useSnapshot(state);
   const scene = useThree((state) => state.scene);
-  const { updateFurniturePosition } = useGlobalState((state) => {
-    return {
-      updateFurniturePosition: state.updateFurniturePosition,
-    };
-  }, shallow);
+  const { updateFurniturePosition, updateFurnitureRotation } = useGlobalState(
+    (state) => {
+      return {
+        updateFurniturePosition: state.updateFurniturePosition,
+        updateFurnitureRotation: state.updateFurnitureRotation,
+      };
+    },
+    shallow,
+  );
 
   const transformRef = useRef<ElementRef<typeof TransformControls>>(null);
 
@@ -65,6 +69,31 @@ const Controls: FC<ControlsProps> = ({ state, modes, roomRef }) => {
     };
   }, [snap.current, roomRef, scene, updateFurniturePosition]);
 
+  const handleTransformEnd = () => {
+    if (!snap.current) return;
+    const object = scene.getObjectByName(snap.current);
+
+    if (!object) return;
+
+    // Update both position and rotation in state
+    updateFurniturePosition(snap.current, object.position.clone());
+
+    updateFurnitureRotation(
+      snap.current,
+      new THREE.Vector3(
+        object.rotation.x,
+        object.rotation.y,
+        object.rotation.z,
+      ),
+    );
+
+    console.log('Transform complete:', {
+      modelIndex: snap.current,
+      position: object.position.clone(),
+      rotation: object.rotation.clone(),
+    });
+  };
+
   return (
     <Fragment>
       {snap.current && (
@@ -74,6 +103,10 @@ const Controls: FC<ControlsProps> = ({ state, modes, roomRef }) => {
           mode={snap.current === 'Room_Geo' ? 'scale' : modes[snap.mode]}
           rotationSnap={Math.PI / 4}
           showY={snap.current === 'Room_Geo' ? false : true}
+          // onObjectChange={(e: any) => {
+          //   e.stopPropagation();
+          // }}
+          onMouseUp={handleTransformEnd}
         />
       )}
       <OrbitControls makeDefault maxPolarAngle={Math.PI / 1.75} />

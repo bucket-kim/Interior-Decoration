@@ -1,9 +1,9 @@
-import { MouseEvent, useEffect, useState } from 'react';
+import { MouseEvent, useState } from 'react';
 import { useAuth } from '../../../context/AuthProvider';
 import LoginSignUp from './LoginSignUp/LoginSignUp';
 
 const AuthPage = () => {
-  const { token, user, logout } = useAuth();
+  const { user, logout } = useAuth();
   const [loginClick, setLoginClick] = useState(false);
 
   const handleLoginClick = (e: MouseEvent) => {
@@ -14,10 +14,6 @@ const AuthPage = () => {
   const handleLogoutClick = () => {
     logout();
   };
-
-  useEffect(() => {
-    console.log(token, user);
-  }, []);
 
   return (
     <div>

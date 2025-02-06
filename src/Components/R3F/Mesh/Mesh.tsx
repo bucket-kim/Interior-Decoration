@@ -23,6 +23,7 @@ const Mesh: FC<MeshProps> = ({ state, interiorModels }) => {
     return {
       furnitures: state.furnitures,
       updateFurniturePosition: state.updateFurniturePosition,
+      // updateFurnitureRotation: state.updateFurnitureRotation,
     };
   }, shallow);
 
@@ -38,6 +39,27 @@ const Mesh: FC<MeshProps> = ({ state, interiorModels }) => {
 
   const handlePointerMiss = (e: MouseEvent) => {
     pointerMiss(e, state);
+  };
+
+  const handleTransformEnd = (index: number) => {
+    if (furnitureRef.current[index] && furnitures[index]) {
+      // Get the current position from the ref and update state
+      const newPosition = furnitureRef.current[index].position.clone();
+      const newRotation = furnitureRef.current[index].rotation.clone();
+
+      updateFurniturePosition(
+        furnitures[index].modelIndex,
+        new THREE.Vector3(newPosition.x, newPosition.y, newPosition.z),
+      );
+      // updateFurnitureRotation(
+      //   furnitures[index].modelIndex,
+      //   new THREE.Vector3(newRotation.x, newRotation.y, newRotation.z),
+      // );
+      console.log('Updated furniture:', {
+        position: newPosition,
+        // rotation: newRotation,
+      });
+    }
   };
 
   useEffect(() => {
@@ -60,6 +82,7 @@ const Mesh: FC<MeshProps> = ({ state, interiorModels }) => {
     furnitureRef.current.forEach((furniture, index) => {
       if (furniture && furnitures[index]) {
         // Only update if position has actually changed
+
         if (furniture.position !== furnitures[index].position) {
           updateFurniturePosition(
             furnitures[index].modelIndex,
@@ -86,6 +109,11 @@ const Mesh: FC<MeshProps> = ({ state, interiorModels }) => {
                   furniture.position.x,
                   furniture.position.y,
                   furniture.position.z,
+                ]}
+                rotation={[
+                  furniture.rotation.x,
+                  furniture.rotation.y,
+                  furniture.rotation.z,
                 ]}
                 name={`${furniture.modelIndex}`}
                 onContextMenu={handleContextMenu}

@@ -21,6 +21,7 @@ interface AuthContextType {
   isAuthenticated: boolean;
   login: (token: string, user: User) => Promise<void>;
   logout: () => Promise<void>;
+  isLoading: boolean;
 }
 
 const AuthContext = createContext<AuthContextType | null>(null);
@@ -28,24 +29,29 @@ const AuthContext = createContext<AuthContextType | null>(null);
 const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
   const [token, setToken] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    const storedToken = localStorage.getItem('token');
-    const storedUser = localStorage.getItem('user');
+    const initializeAuth = () => {
+      const storedToken = localStorage.getItem('token');
+      const storedUser = localStorage.getItem('user');
 
-    if (storedToken && storedUser) {
-      try {
-        const parsedUser = JSON.parse(storedUser);
-        if (parsedUser && typeof parsedUser === 'object') {
-          setToken(storedToken);
-          setUser(parsedUser);
+      if (storedToken && storedUser) {
+        try {
+          const parsedUser = JSON.parse(storedUser);
+          if (parsedUser && typeof parsedUser === 'object') {
+            setToken(storedToken);
+            setUser(parsedUser);
+          }
+        } catch (error) {
+          console.error('Error parsing user data:', error);
+          localStorage.removeItem('token');
+          localStorage.removeItem('user');
         }
-      } catch (error) {
-        console.error('Error parsing user data:', error);
-        localStorage.removeItem('token');
-        localStorage.removeItem('user');
       }
-    }
+      setIsLoading(false);
+    };
+    initializeAuth();
   }, []);
 
   const login = async (newToken: string, newUser: User) => {
@@ -62,9 +68,20 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
     setUser(null);
   };
 
+  if (isLoading) {
+    return null;
+  }
+
   return (
     <AuthContext.Provider
-      value={{ user, token, isAuthenticated: !!token, login, logout }}
+      value={{
+        user,
+        token,
+        isAuthenticated: !!token,
+        login,
+        logout,
+        isLoading,
+      }}
     >
       {children}
     </AuthContext.Provider>
