@@ -24,7 +24,7 @@
     "styled-components": "^6.1.12",
     "three": "^0.167.1",
     "valtio": "^2.1.2",
-    "vercel": "^39.3.0",
+    "vercel": "^41.0.2",
     "zustand": "^4.5.4"
   },
   "devDependencies": {

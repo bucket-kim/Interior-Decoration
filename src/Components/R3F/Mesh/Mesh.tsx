@@ -41,27 +41,6 @@ const Mesh: FC<MeshProps> = ({ state, interiorModels }) => {
     pointerMiss(e, state);
   };
 
-  const handleTransformEnd = (index: number) => {
-    if (furnitureRef.current[index] && furnitures[index]) {
-      // Get the current position from the ref and update state
-      const newPosition = furnitureRef.current[index].position.clone();
-      const newRotation = furnitureRef.current[index].rotation.clone();
-
-      updateFurniturePosition(
-        furnitures[index].modelIndex,
-        new THREE.Vector3(newPosition.x, newPosition.y, newPosition.z),
-      );
-      // updateFurnitureRotation(
-      //   furnitures[index].modelIndex,
-      //   new THREE.Vector3(newRotation.x, newRotation.y, newRotation.z),
-      // );
-      console.log('Updated furniture:', {
-        position: newPosition,
-        // rotation: newRotation,
-      });
-    }
-  };
-
   useEffect(() => {
     if (!interiorModels) return;
 

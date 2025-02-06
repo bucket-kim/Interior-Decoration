@@ -19,7 +19,7 @@ const FurnitureLoader = () => {
         if (isLoading) return;
         if (!token || !user) return;
         const response = await fetch(
-          `http://localhost:8080/api/furnitures/${user.id}`,
+          `${import.meta.env.VITE_BACKEND_URL}/furnitures/${user.id}`,
           {
             headers: {
               Authorization: `Bearer ${token}`,
