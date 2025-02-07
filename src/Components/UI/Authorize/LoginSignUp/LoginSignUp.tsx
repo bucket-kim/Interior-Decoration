@@ -15,7 +15,7 @@ interface UsersType {
   password: string;
   phone: string;
 }
-const API_URL = import.meta.env.VITE_BACKEND_URL || 'http://localhost:8080/api';
+const API_URL = import.meta.env.VITE_BACKEND_URL;
 
 const LoginSignUp: FC<LoginSignUpProps> = ({ setLoginClick }) => {
   const [isSignUp, setIsSignUp] = useState(false);
