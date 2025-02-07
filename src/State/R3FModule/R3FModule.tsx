@@ -19,7 +19,7 @@ const R3FModule = ({ set }: globalStateApiType) => {
           modelIndex: `${modelName}_${(state.furnitures.length + 1).toString().padStart(3, '0')}`,
           position: new THREE.Vector3(0, 0.25, 0),
           rotation: new THREE.Vector3(0, 0, 0),
-          userId: '',
+          // userId: '',
         };
         return { furnitures: [...state.furnitures, newMesh] };
       }),

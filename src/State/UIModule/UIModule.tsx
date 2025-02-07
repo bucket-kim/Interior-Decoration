@@ -17,6 +17,11 @@ const UIModule = ({ set }: globalStateApiType) => {
     setInteriorData: (interiorData: THREE.Object3D[]) => {
       set({ interiorData: interiorData });
     },
+
+    token: '',
+    setToken: (token: string) => {
+      set({ token: token });
+    },
   };
 };
 

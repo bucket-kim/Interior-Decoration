@@ -4,7 +4,6 @@ import { useEffect, useRef } from 'react';
 import * as THREE from 'three';
 import { proxy } from 'valtio';
 import { shallow } from 'zustand/shallow';
-import { useAuth } from '../../context/AuthProvider';
 import FurnitureLoader from '../../context/FurnitureLoader';
 import { useGlobalState } from '../../State/useGlobalState';
 import Controls from './Controls/Controls';
@@ -57,8 +56,6 @@ const R3F = () => {
       : (state.current = null);
   }, [scaleRoomButtonClick]);
 
-  const { user } = useAuth();
-
   return (
     <Canvas camera={{ position: [6, 5, 8], fov: 35 }} dpr={[1, 2]} shadows>
       <Lights />
@@ -73,7 +70,7 @@ const R3F = () => {
         <RoomFloor />
         <Walls />
       </Center>
-      {user && <FurnitureLoader />}
+      <FurnitureLoader />
       <Mesh state={state} interiorModels={interiorModels.scene} />
       <GridFloor />
       <Controls state={state} modes={modes} roomRef={roomGroupRef} />

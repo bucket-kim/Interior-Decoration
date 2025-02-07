@@ -1,33 +1,55 @@
-import { MouseEvent, useState } from 'react';
-import { useAuth } from '../../../context/AuthProvider';
+import { Fragment, MouseEvent, useCallback, useEffect, useState } from 'react';
+import supabase from '../../../context/Supabase/Supabase';
 import LoginSignUp from './LoginSignUp/LoginSignUp';
 
 const AuthPage = () => {
-  const { user, logout } = useAuth();
+  const [session, setSession] = useState(null);
   const [loginClick, setLoginClick] = useState(false);
 
-  const handleLoginClick = (e: MouseEvent) => {
-    e.preventDefault();
-    setLoginClick(true);
-  };
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      if (!session) return;
+      setSession(session as any);
+    });
 
-  const handleLogoutClick = () => {
-    logout();
-  };
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((_event, session) => {
+      setSession(session as any);
+    });
 
-  return (
-    <div>
-      {user ? (
-        <div className="relative">
-          <h2>Hi, {user.firstName}!</h2>
-          <button onClick={handleLogoutClick}>Logout</button>
-        </div>
-      ) : (
-        <button onClick={handleLoginClick}>Login / Sign up</button>
-      )}
-      {loginClick && <LoginSignUp setLoginClick={setLoginClick} />}
-    </div>
+    return () => subscription.unsubscribe();
+  }, []);
+
+  const handleSignOut = useCallback(
+    async (e: MouseEvent) => {
+      e.preventDefault();
+      const { error } = await supabase.auth.signOut();
+
+      if (error) {
+        console.error('Error signing out:', error);
+      } else {
+        console.log('User signed out successfully');
+      }
+    },
+    [session],
   );
+
+  if (!session) {
+    return (
+      <Fragment>
+        <button onClick={() => setLoginClick(true)}>Log in / Sign up</button>
+        {loginClick && <LoginSignUp setLoginClick={setLoginClick} />}
+      </Fragment>
+    );
+  } else {
+    return (
+      <div>
+        <div>Logged in!</div>
+        <button onClick={handleSignOut}>Sign Out</button>
+      </div>
+    );
+  }
 };
 
 export default AuthPage;

@@ -1,7 +1,25 @@
+import type { Provider } from '@supabase/supabase-js';
+import supabase from '../../../../../context/Supabase/Supabase';
+
 const SocialsAuth = () => {
-  const handleSocialLogin = (provider: string) => {
+  const handleSocialLogin = async (provider: Provider) => {
+    const { data, error } = await supabase.auth.signInWithOAuth({
+      provider: provider,
+      options: {
+        queryParams: {
+          access_type: 'offline',
+          prompt: 'consent',
+        },
+      },
+    });
+
+    if (error) {
+      console.log(error.message);
+    } else {
+      console.log(data);
+      console.log(`Logging in with ${provider}`);
+    }
     // Handle social login
-    console.log(`Logging in with ${provider}`);
   };
 
   return (
@@ -22,7 +40,7 @@ const SocialsAuth = () => {
         >
           <img src="/api/placeholder/20/20" alt="Google" className="w-5 h-5" />
         </button>
-        <button
+        {/* <button
           onClick={() => handleSocialLogin('facebook')}
           className="w-full flex justify-center py-2 px-4 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
         >
@@ -37,7 +55,7 @@ const SocialsAuth = () => {
           className="w-full flex justify-center py-2 px-4 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
         >
           <img src="/api/placeholder/20/20" alt="Apple" className="w-5 h-5" />
-        </button>
+        </button> */}
       </div>
     </div>
   );

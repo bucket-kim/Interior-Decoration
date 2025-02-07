@@ -1,4 +1,7 @@
 import { ChangeEvent, FC, FormEvent, useState } from 'react';
+import { shallow } from 'zustand/shallow';
+import supabase from '../../../../context/Supabase/Supabase';
+import { useGlobalState } from '../../../../State/useGlobalState';
 import LoginSignUpStyleContainer from './LoginSignUpStyleContainer';
 import SocialsAuth from './SocialsAuth/SocialsAuth';
 import UserInput from './UserInput/UserInput';
@@ -15,6 +18,7 @@ interface UsersType {
   password: string;
   phone: string;
 }
+
 const API_URL = import.meta.env.VITE_BACKEND_URL;
 
 const LoginSignUp: FC<LoginSignUpProps> = ({ setLoginClick }) => {
@@ -28,6 +32,11 @@ const LoginSignUp: FC<LoginSignUpProps> = ({ setLoginClick }) => {
     password: '',
     phone: '',
   });
+  const { setToken } = useGlobalState((state) => {
+    return {
+      setToken: state.setToken,
+    };
+  }, shallow);
 
   const handleCloseClick = () => {
     setLoginClick(false);
@@ -41,38 +50,68 @@ const LoginSignUp: FC<LoginSignUpProps> = ({ setLoginClick }) => {
     }));
   };
 
-  const handleFormSubmit = async (e: FormEvent) => {
+  const handleSignUp = async (e: FormEvent) => {
     e.preventDefault();
+
     setIsLoading(true);
-    setError(null);
 
-    try {
-      const endpoint = isSignUp ? '/auth/register' : '/auth/login';
-      const response = await fetch(`${API_URL}${endpoint}`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
+    const { data, error } = await supabase.auth.signUp({
+      email: formData.email,
+      password: formData.password,
+      options: {
+        data: {
+          firstName: formData.firstName,
+          lastName: formData.lastName,
+          phoneNumber: formData.phone,
         },
-        body: JSON.stringify(formData),
+      },
+    });
+
+    if (error) {
+      alert(error.message);
+    } else {
+      if (!data.session) return;
+      setToken(data.session.access_token);
+      alert('please check your inbox for email verification');
+      setFormData({
+        firstName: '',
+        lastName: '',
+        email: '',
+        password: '',
+        phone: '',
       });
-      const data = await response.json();
-      if (!response.ok) {
-        throw new Error('Sign up failed');
-      }
-
-      localStorage.setItem('token', data.accessToken);
-
-      if (data.user) {
-        localStorage.setItem('user', JSON.stringify(data.user));
-      }
-
       setLoginClick(false);
-    } catch (error) {
-      setError(
-        error instanceof Error ? error.message : 'An unknown error occurred',
-      );
-    } finally {
-      setIsLoading(false);
+    }
+
+    setIsLoading(false);
+  };
+
+  const handleSignIn = async (e: FormEvent) => {
+    e.preventDefault();
+
+    setIsLoading(true);
+
+    const { email, password } = formData;
+
+    const { data, error } = await supabase.auth.signInWithPassword({
+      email,
+      password,
+    });
+
+    if (error) {
+      alert(error.message);
+    } else {
+      if (!data.session) return;
+      setToken(data.session.access_token);
+      console.log('successfully signed in');
+      setFormData({
+        firstName: '',
+        lastName: '',
+        email: '',
+        password: '',
+        phone: '',
+      });
+      setLoginClick(false);
     }
   };
 
@@ -81,7 +120,7 @@ const LoginSignUp: FC<LoginSignUpProps> = ({ setLoginClick }) => {
       <div className="signin-container">
         <button onClick={handleCloseClick}>x</button>
         {error && <p className="text-red-500">{error}</p>}
-        <form onSubmit={handleFormSubmit}>
+        <form onSubmit={isSignUp ? handleSignUp : handleSignIn}>
           {isSignUp && (
             <>
               <UserInput
@@ -118,7 +157,7 @@ const LoginSignUp: FC<LoginSignUpProps> = ({ setLoginClick }) => {
             onChange={handleInputChange}
             placeholder="password"
           />
-
+          <SocialsAuth />
           <button
             type="submit"
             disabled={isLoading}
@@ -155,8 +194,6 @@ const LoginSignUp: FC<LoginSignUpProps> = ({ setLoginClick }) => {
             )}
           </button>
         </form>
-
-        <SocialsAuth />
 
         <p className="mt-8 text-center text-sm text-gray-600">
           {isSignUp ? 'Already have an account?' : "Don't have an account?"}{' '}

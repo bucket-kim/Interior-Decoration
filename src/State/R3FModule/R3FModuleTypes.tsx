@@ -6,7 +6,7 @@ export interface FurnitureMesh {
   modelIndex: string;
   position: THREE.Vector3;
   rotation: THREE.Vector3;
-  userId: string;
+  // userId: string;
 }
 
 export interface R3FModuleTypes {

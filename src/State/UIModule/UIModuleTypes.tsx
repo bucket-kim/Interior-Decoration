@@ -9,4 +9,7 @@ export interface UIModuleTypes {
 
   interiorData: THREE.Object3D[];
   setInteriorData: (interiorData: THREE.Object3D[]) => void;
+
+  token: string;
+  setToken: (token: string) => void;
 }
