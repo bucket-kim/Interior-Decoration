@@ -9,7 +9,6 @@ const App = () => {
     <AuthProvider>
       <GlobalStyle />
       <Suspense fallback={null}>
-        {/* @ts-expect-error Async components are valid in React 18 */}
         <R3F />
       </Suspense>
       <UI />

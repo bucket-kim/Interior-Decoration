@@ -22,7 +22,6 @@ interface UsersType {
 const LoginSignUp: FC<LoginSignUpProps> = ({ setLoginClick }) => {
   const [isSignUp, setIsSignUp] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
   const [formData, setFormData] = useState<UsersType>({
     firstName: '',
     lastName: '',
@@ -117,7 +116,6 @@ const LoginSignUp: FC<LoginSignUpProps> = ({ setLoginClick }) => {
     <LoginSignUpStyleContainer>
       <div className="signin-container">
         <button onClick={handleCloseClick}>x</button>
-        {error && <p className="text-red-500">{error}</p>}
         <form onSubmit={isSignUp ? handleSignUp : handleSignIn}>
           {isSignUp && (
             <>
