@@ -19,8 +19,6 @@ interface UsersType {
   phone: string;
 }
 
-const API_URL = import.meta.env.VITE_BACKEND_URL;
-
 const LoginSignUp: FC<LoginSignUpProps> = ({ setLoginClick }) => {
   const [isSignUp, setIsSignUp] = useState(false);
   const [isLoading, setIsLoading] = useState(false);

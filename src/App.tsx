@@ -1,3 +1,4 @@
+import { Suspense } from 'react';
 import R3F from './Components/R3F/R3F';
 import UI from './Components/UI/UI';
 import GlobalStyle from './Styles/GlobalStyle';
@@ -7,7 +8,10 @@ const App = () => {
   return (
     <AuthProvider>
       <GlobalStyle />
-      <R3F />
+      <Suspense fallback={null}>
+        {/* @ts-expect-error Async components are valid in React 18 */}
+        <R3F />
+      </Suspense>
       <UI />
     </AuthProvider>
   );
