@@ -6,7 +6,7 @@ const GridFloor = () => {
     <Fragment>
       <Grid
         receiveShadow
-        position={[0, -0.0255, 0]}
+        position={[0, -0.255, 0]}
         args={[10, 10]}
         cellSize={0.5}
         cellThickness={1}

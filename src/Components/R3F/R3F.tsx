@@ -23,6 +23,8 @@ const state = proxy<State>({ current: null, mode: 0 });
 
 const R3F = () => {
   const roomGroupRef = useRef<THREE.Group>(null);
+  const wallRefX = useRef<THREE.Mesh>(null);
+  const wallRefZ = useRef<THREE.Mesh>(null);
   const roomScale = useRef<number>(5);
 
   const { setInteriorData } = useGlobalState((state) => {
@@ -66,16 +68,28 @@ const R3F = () => {
         scale={roomScale.current}
         receiveShadow
         castShadow
+        position={[0, -0.25, 0]}
       >
-        <RoomFloor />
-        <Walls />
+        <group>
+          <RoomFloor />
+          <Walls wallRefX={wallRefX} wallRefZ={wallRefZ} />
+        </group>
       </Center>
+      {/* <Center top scale={roomScale.current}>
+        <Walls />
+      </Center> */}
 
       <FurnitureLoader />
 
       <Mesh state={state} interiorModels={interiorModels.scene} />
       <GridFloor />
-      <Controls state={state} modes={modes} roomRef={roomGroupRef} />
+      <Controls
+        state={state}
+        modes={modes}
+        roomRef={roomGroupRef}
+        wallRefX={wallRefX}
+        wallRefZ={wallRefZ}
+      />
     </Canvas>
   );
 };

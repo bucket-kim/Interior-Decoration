@@ -10,9 +10,17 @@ interface ControlsProps {
   state: any;
   modes: any;
   roomRef: RefObject<THREE.Group>;
+  wallRefX: RefObject<THREE.Mesh>;
+  wallRefZ: RefObject<THREE.Mesh>;
 }
 
-const Controls: FC<ControlsProps> = ({ state, modes, roomRef }) => {
+const Controls: FC<ControlsProps> = ({
+  state,
+  modes,
+  roomRef,
+  wallRefX,
+  wallRefZ,
+}) => {
   const snap = useSnapshot(state);
 
   const scene = useThree((state) => state.scene);
@@ -33,7 +41,13 @@ const Controls: FC<ControlsProps> = ({ state, modes, roomRef }) => {
     const controls = transformRef.current;
 
     const handleTransform = () => {
-      if (!snap.current || !roomRef.current) return;
+      if (
+        !snap.current ||
+        !roomRef.current ||
+        !wallRefX.current ||
+        !wallRefZ.current
+      )
+        return;
       const object = scene.getObjectByName(snap.current);
 
       if (!object) return;
@@ -49,15 +63,28 @@ const Controls: FC<ControlsProps> = ({ state, modes, roomRef }) => {
         z: objectSize.z / 2,
       };
 
-      const maxX = roomSize.x / 2 - (actualScale.x + 0.05);
-      const maxZ = roomSize.z / 2 - (actualScale.z + 0.05);
+      const worldScale = new THREE.Vector3();
+      object.getWorldScale(worldScale);
+
+      const maxX = roomSize.x / 2 - (actualScale.x + 0.1);
+      const maxY = roomSize.y - objectSize.y;
+      const maxZ = roomSize.z / 2 - (actualScale.z + 0.1);
 
       const newPosition = object.position.clone();
 
-      newPosition.x = THREE.MathUtils.clamp(newPosition.x, -maxX, maxX);
-      newPosition.z = THREE.MathUtils.clamp(newPosition.z, -maxZ, maxZ);
+      newPosition.x = THREE.MathUtils.clamp(
+        newPosition.x,
+        -maxX + worldScale.x * 0.1,
+        maxX,
+      );
+      newPosition.y = THREE.MathUtils.clamp(newPosition.y, 0, maxY);
+      newPosition.z = THREE.MathUtils.clamp(
+        newPosition.z,
+        -maxZ,
+        maxZ + worldScale.z * 0.1,
+      );
 
-      if (!object.position.equals(newPosition)) {
+      if (!object.position.equals(newPosition) && object.name !== 'Room_Geo') {
         object.position.copy(newPosition);
         // updateFurniturePosition(snap.current, newPosition);
       }
@@ -98,9 +125,6 @@ const Controls: FC<ControlsProps> = ({ state, modes, roomRef }) => {
           mode={snap.current === 'Room_Geo' ? 'scale' : modes[snap.mode]}
           rotationSnap={Math.PI / 4}
           showY={snap.current === 'Room_Geo' ? false : true}
-          // onObjectChange={(e: any) => {
-          //   e.stopPropagation();
-          // }}
           onMouseUp={handleTransformEnd}
         />
       )}

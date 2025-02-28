@@ -17,7 +17,7 @@ const R3FModule = ({ set }: globalStateApiType) => {
           id: crypto.randomUUID(),
           name: modelName,
           modelIndex: `${modelName}_${(state.furnitures.length + 1).toString().padStart(3, '0')}`,
-          position: new THREE.Vector3(0, 0.25, 0),
+          position: new THREE.Vector3(0, 0, 0),
           rotation: new THREE.Vector3(0, 0, 0),
           // userId: '',
         };

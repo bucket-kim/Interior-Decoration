@@ -1,9 +1,16 @@
-import { Fragment } from 'react';
+import { FC, Fragment, RefObject } from 'react';
+import * as THREE from 'three';
 
-const Walls = () => {
+interface WallProps {
+  wallRefX: RefObject<THREE.Mesh>;
+  wallRefZ: RefObject<THREE.Mesh>;
+}
+
+const Walls: FC<WallProps> = ({ wallRefX, wallRefZ }) => {
   return (
     <Fragment>
       <mesh
+        ref={wallRefX}
         receiveShadow
         castShadow
         name="wall"
@@ -16,6 +23,7 @@ const Walls = () => {
       </mesh>
 
       <mesh
+        ref={wallRefZ}
         receiveShadow
         castShadow
         name="wall"

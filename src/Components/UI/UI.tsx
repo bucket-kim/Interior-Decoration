@@ -20,8 +20,8 @@ const UI = () => {
       {session && <FurnitureMenu />}
       <div style={{ position: 'absolute', top: '0', right: '0' }}>
         <AuthPage />
-        <RoomScaleButton />
-        <StoreFurnitureButton />
+        {/* <RoomScaleButton />
+        <StoreFurnitureButton /> */}
         {session && (
           <Fragment>
             <RoomScaleButton />
