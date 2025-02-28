@@ -14,6 +14,7 @@ interface ControlsProps {
 
 const Controls: FC<ControlsProps> = ({ state, modes, roomRef }) => {
   const snap = useSnapshot(state);
+
   const scene = useThree((state) => state.scene);
   const { updateFurniturePosition, updateFurnitureRotation } = useGlobalState(
     (state) => {
@@ -86,12 +87,6 @@ const Controls: FC<ControlsProps> = ({ state, modes, roomRef }) => {
         object.rotation.z,
       ),
     );
-
-    console.log('Transform complete:', {
-      modelIndex: snap.current,
-      position: object.position.clone(),
-      rotation: object.rotation.clone(),
-    });
   };
 
   return (

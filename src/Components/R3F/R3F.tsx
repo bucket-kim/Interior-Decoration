@@ -31,11 +31,6 @@ const R3F = () => {
     };
   }, shallow);
 
-  // const user = useMemo(async() => {
-  //   const {data: {user}} = await supabase.auth.getUser()
-  //   return user
-  // }, [])
-
   const interiorModels = useGLTF('./Models/deco-interior-asset.glb', true);
 
   useEffect(() => {

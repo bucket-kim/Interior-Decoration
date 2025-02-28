@@ -1,11 +1,11 @@
-import { Center } from '@react-three/drei';
+import { Center, Html } from '@react-three/drei';
 import { ThreeEvent } from '@react-three/fiber';
 import { FC, Fragment, useEffect, useRef, useState } from 'react';
 import * as THREE from 'three';
 import { useSnapshot } from 'valtio';
 import { shallow } from 'zustand/shallow';
 import { useGlobalState } from '../../../State/useGlobalState';
-import MeshControls from './MeshControls/MeshControls';
+import useMeshControls from './MeshControls/MeshControls';
 
 interface MeshProps {
   state: any;
@@ -19,26 +19,34 @@ const Mesh: FC<MeshProps> = ({ state, interiorModels }) => {
 
   const [modelMap, setModelMap] = useState<Record<string, THREE.Object3D>>({});
 
-  const { furnitures, updateFurniturePosition } = useGlobalState((state) => {
-    return {
-      furnitures: state.furnitures,
-      updateFurniturePosition: state.updateFurniturePosition,
-      // updateFurnitureRotation: state.updateFurnitureRotation,
-    };
-  }, shallow);
+  const { furnitures, setFurnitures, updateFurniturePosition } = useGlobalState(
+    (state) => {
+      return {
+        furnitures: state.furnitures,
+        setFurnitures: state.setFurnitures,
+        updateFurniturePosition: state.updateFurniturePosition,
+        // updateFurnitureRotation: state.updateFurnitureRotation,
+      };
+    },
+    shallow,
+  );
 
-  const { furnitureClick, contextMenu, pointerMiss } = MeshControls();
+  const { furnitureClick, contextMenu, pointerMiss } = useMeshControls(
+    furnitureRef,
+    state,
+    snap,
+  );
 
   const handleFurnitureClick = (e: ThreeEvent<MouseEvent>) => {
-    furnitureClick(e, furnitureRef, state);
+    furnitureClick(e);
   };
 
   const handleContextMenu = (e: ThreeEvent<MouseEvent>) => {
-    contextMenu(e, furnitureRef, snap, state);
+    contextMenu(e);
   };
 
   const handlePointerMiss = (e: MouseEvent) => {
-    pointerMiss(e, state);
+    pointerMiss(e);
   };
 
   useEffect(() => {
@@ -77,6 +85,7 @@ const Mesh: FC<MeshProps> = ({ state, interiorModels }) => {
       {furnitures && furnitures.length > 0
         ? furnitures.map((furniture, index) => {
             const model = modelMap[furniture.name] as THREE.Mesh;
+
             if (!model) return;
             return (
               <Center
@@ -103,6 +112,38 @@ const Mesh: FC<MeshProps> = ({ state, interiorModels }) => {
                   furnitureRef.current[index] = el;
                 }}
               >
+                {snap.current === furniture.modelIndex && (
+                  <Html
+                    as="div"
+                    style={{ fontFamily: 'sans-serif' }}
+                    position={[-2, 2, 0]}
+                    center
+                    prepend
+                  >
+                    <div
+                      style={{
+                        width: '3rem',
+                        height: '3rem',
+                        background: 'skyblue',
+                        margin: 'auto',
+                        borderRadius: '50%',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                      }}
+                      onClick={(e) => {
+                        e.preventDefault();
+                        const updatedFurnitures = furnitures.filter(
+                          (item) => item.id !== furniture.id,
+                        );
+                        setFurnitures(updatedFurnitures);
+                        console.log('id deleted ' + furniture.id);
+                      }}
+                    >
+                      <h1 style={{ margin: '0', color: 'white' }}>X</h1>
+                    </div>
+                  </Html>
+                )}
                 <mesh
                   name={furniture.modelIndex}
                   castShadow

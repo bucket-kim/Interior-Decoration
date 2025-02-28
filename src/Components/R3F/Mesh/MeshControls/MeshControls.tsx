@@ -2,12 +2,12 @@ import { ThreeEvent } from '@react-three/fiber';
 import { RefObject } from 'react';
 import * as THREE from 'three';
 
-const MeshControls = () => {
-  const furnitureClick = (
-    e: ThreeEvent<MouseEvent>,
-    furnitureRef: RefObject<THREE.Group[]>,
-    state: any,
-  ) => {
+const useMeshControls = (
+  furnitureRef: RefObject<THREE.Group[]>,
+  state: any,
+  snap: any,
+) => {
+  const furnitureClick = (e: ThreeEvent<MouseEvent>) => {
     if (!furnitureRef.current) return;
     e.stopPropagation();
     const findFurniture = furnitureRef.current.find((furniture) => {
@@ -18,12 +18,7 @@ const MeshControls = () => {
       state.current = findFurniture.name;
     }
   };
-  const contextMenu = (
-    e: ThreeEvent<MouseEvent>,
-    furnitureRef: RefObject<THREE.Group[]>,
-    snap: any,
-    state: any,
-  ) => {
+  const contextMenu = (e: ThreeEvent<MouseEvent>) => {
     if (!furnitureRef.current) return;
     e.stopPropagation();
     furnitureRef.current.map((furniture) => {
@@ -31,10 +26,10 @@ const MeshControls = () => {
     });
   };
 
-  const pointerMiss = (e: MouseEvent, state: any) => {
+  const pointerMiss = (e: MouseEvent) => {
     e.type === 'click' && (state.current = null);
   };
   return { furnitureClick, contextMenu, pointerMiss };
 };
 
-export default MeshControls;
+export default useMeshControls;

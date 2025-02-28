@@ -1,9 +1,17 @@
 import { Fragment, MouseEvent, useCallback, useEffect, useState } from 'react';
+import { shallow } from 'zustand/shallow';
 import supabase from '../../../context/Supabase/Supabase';
+import { useGlobalState } from '../../../State/useGlobalState';
 import LoginSignUp from './LoginSignUp/LoginSignUp';
 
 const AuthPage = () => {
-  const [session, setSession] = useState(null);
+  const { session, setSession } = useGlobalState((state) => {
+    return {
+      session: state.session,
+      setSession: state.setSession,
+    };
+  }, shallow);
+
   const [loginClick, setLoginClick] = useState(false);
 
   useEffect(() => {

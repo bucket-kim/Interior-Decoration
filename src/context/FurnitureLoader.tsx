@@ -50,8 +50,6 @@ const FurnitureLoader = () => {
 
         if (!transformedFurnitures) return;
 
-        console.log(transformedFurnitures);
-
         setFurnitures(transformedFurnitures);
       } catch (error) {
         console.log(error);
