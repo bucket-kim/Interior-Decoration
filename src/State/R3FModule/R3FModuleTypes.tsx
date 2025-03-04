@@ -13,6 +13,9 @@ export interface R3FModuleTypes {
   meshClick: boolean;
   setMeshClick: (meshClick: boolean) => void;
 
+  roomScale: number;
+  setRoomScale: (number: number) => void;
+
   furnitures: FurnitureMesh[];
   setFurnitures: (furnitures: FurnitureMesh[]) => void;
   addFurnitures: (modelName: string) => void;

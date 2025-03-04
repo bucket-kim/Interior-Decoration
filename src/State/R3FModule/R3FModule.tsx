@@ -9,6 +9,11 @@ const R3FModule = ({ set }: globalStateApiType) => {
       set({ meshClick: meshClick });
     },
 
+    roomScale: 5,
+    setRoomScale: (roomScale: number) => {
+      set({ roomScale: roomScale });
+    },
+
     furnitures: [] as FurnitureMesh[],
     setFurnitures: (furnitures: FurnitureMesh[]) => set({ furnitures }),
     addFurnitures: (modelName: string) =>

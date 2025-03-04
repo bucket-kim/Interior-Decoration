@@ -12,6 +12,7 @@ interface ControlsProps {
   roomRef: RefObject<THREE.Group>;
   wallRefX: RefObject<THREE.Mesh>;
   wallRefZ: RefObject<THREE.Mesh>;
+  onRoomScaleChange?: () => void;
 }
 
 const Controls: FC<ControlsProps> = ({
@@ -20,6 +21,7 @@ const Controls: FC<ControlsProps> = ({
   roomRef,
   wallRefX,
   wallRefZ,
+  onRoomScaleChange,
 }) => {
   const snap = useSnapshot(state);
 
@@ -104,16 +106,19 @@ const Controls: FC<ControlsProps> = ({
     if (!object) return;
 
     // Update both position and rotation in state
-    updateFurniturePosition(snap.current, object.position.clone());
-
-    updateFurnitureRotation(
-      snap.current,
-      new THREE.Vector3(
-        object.rotation.x,
-        object.rotation.y,
-        object.rotation.z,
-      ),
-    );
+    if (snap.current === 'Room_Geo' && onRoomScaleChange) {
+      onRoomScaleChange();
+    } else {
+      updateFurniturePosition(snap.current, object.position.clone());
+      updateFurnitureRotation(
+        snap.current,
+        new THREE.Vector3(
+          object.rotation.x,
+          object.rotation.y,
+          object.rotation.z,
+        ),
+      );
+    }
   };
 
   return (

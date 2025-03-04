@@ -25,13 +25,16 @@ const R3F = () => {
   const roomGroupRef = useRef<THREE.Group>(null);
   const wallRefX = useRef<THREE.Mesh>(null);
   const wallRefZ = useRef<THREE.Mesh>(null);
-  const roomScale = useRef<number>(5);
 
-  const { setInteriorData } = useGlobalState((state) => {
-    return {
-      setInteriorData: state.setInteriorData,
-    };
-  }, shallow);
+  const { setInteriorData, roomScale, setRoomScale, scaleRoomButtonClick } =
+    useGlobalState((state) => {
+      return {
+        setInteriorData: state.setInteriorData,
+        roomScale: state.roomScale,
+        setRoomScale: state.setRoomScale,
+        scaleRoomButtonClick: state.scaleRoomButtonClick,
+      };
+    }, shallow);
 
   const interiorModels = useGLTF('./Models/deco-interior-asset.glb', true);
 
@@ -44,11 +47,12 @@ const R3F = () => {
     );
   }, []);
 
-  const { scaleRoomButtonClick } = useGlobalState((state) => {
-    return {
-      scaleRoomButtonClick: state.scaleRoomButtonClick,
-    };
-  }, shallow);
+  const handleRoomScaleChange = () => {
+    if (!roomGroupRef.current) return;
+    const worldScale = new THREE.Vector3();
+    roomGroupRef.current.getWorldScale(worldScale);
+    setRoomScale(worldScale.x);
+  };
 
   useEffect(() => {
     if (!roomGroupRef.current) return;
@@ -59,13 +63,23 @@ const R3F = () => {
   }, [scaleRoomButtonClick]);
 
   return (
-    <Canvas camera={{ position: [6, 5, 8], fov: 35 }} dpr={[1, 2]} shadows>
+    <Canvas
+      camera={{ position: [6, 5, 8], fov: 35 }}
+      dpr={[1, 2]}
+      shadows
+      gl={{
+        toneMapping: THREE.ACESFilmicToneMapping,
+        toneMappingExposure: 1,
+        antialias: true,
+      }}
+    >
       <Lights />
+      <FurnitureLoader />
       <Center
         top
         name="Room_Geo"
         ref={roomGroupRef}
-        scale={roomScale.current}
+        scale={roomScale}
         receiveShadow
         castShadow
         position={[0, -0.25, 0]}
@@ -75,12 +89,6 @@ const R3F = () => {
           <Walls wallRefX={wallRefX} wallRefZ={wallRefZ} />
         </group>
       </Center>
-      {/* <Center top scale={roomScale.current}>
-        <Walls />
-      </Center> */}
-
-      <FurnitureLoader />
-
       <Mesh state={state} interiorModels={interiorModels.scene} />
       <GridFloor />
       <Controls
@@ -89,6 +97,7 @@ const R3F = () => {
         roomRef={roomGroupRef}
         wallRefX={wallRefX}
         wallRefZ={wallRefZ}
+        onRoomScaleChange={handleRoomScaleChange}
       />
     </Canvas>
   );

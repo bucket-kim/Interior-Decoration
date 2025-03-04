@@ -7,6 +7,8 @@ const Lights = () => {
       <directionalLight
         position={[4, 10, -4]}
         castShadow
+        // shadow-normalBias={0.027}
+        // shadow-bias={-0.004}
         shadow-mapSize={[1024, 1024]} // Increase shadow map resolution
         shadow-camera-far={50}
         shadow-camera-left={-10}
@@ -15,6 +17,7 @@ const Lights = () => {
         shadow-camera-bottom={-10}
       />
       <Environment preset="apartment" environmentIntensity={0.75} />
+      {/* <Environment files={envMapFile} environmentIntensity={0.75} /> */}
     </Fragment>
   );
 };

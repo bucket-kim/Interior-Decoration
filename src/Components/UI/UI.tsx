@@ -1,4 +1,3 @@
-import { Fragment } from 'react/jsx-runtime';
 import { shallow } from 'zustand/shallow';
 import { useGlobalState } from '../../State/useGlobalState';
 import AuthPage from './Authorize/AuthPage';
@@ -16,18 +15,18 @@ const UI = () => {
 
   return (
     <UIStyleContainer>
-      {/* <FurnitureMenu /> */}
-      {session && <FurnitureMenu />}
+      <FurnitureMenu />
+      {/* {session && <FurnitureMenu />} */}
       <div style={{ position: 'absolute', top: '0', right: '0' }}>
         <AuthPage />
-        {/* <RoomScaleButton />
-        <StoreFurnitureButton /> */}
-        {session && (
+        <RoomScaleButton />
+        <StoreFurnitureButton />
+        {/* {session && (
           <Fragment>
             <RoomScaleButton />
             <StoreFurnitureButton />
           </Fragment>
-        )}
+        )} */}
       </div>
     </UIStyleContainer>
   );

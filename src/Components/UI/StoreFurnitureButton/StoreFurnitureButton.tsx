@@ -3,11 +3,45 @@ import supabase from '../../../context/Supabase/Supabase';
 import { useGlobalState } from '../../../State/useGlobalState';
 
 const StoreFurnitureButton = () => {
-  const { furnitures } = useGlobalState((state) => {
+  const { furnitures, roomScale } = useGlobalState((state) => {
     return {
       furnitures: state.furnitures,
+      roomScale: state.roomScale,
     };
   }, shallow);
+
+  const saveRoomScale = async (userId: string) => {
+    try {
+      const { data: existingSetting } = await supabase
+        .from('room_settings')
+        .select('id')
+        .eq('user_id', userId)
+        .single();
+
+      if (existingSetting) {
+        const { error } = await supabase
+          .from('room_settings')
+          .update({
+            scale: roomScale,
+            updated_at: new Date().toISOString(),
+          })
+          .eq('id', existingSetting.id);
+
+        if (error) throw error;
+      } else {
+        const { error } = await supabase.from('room_settings').insert({
+          user_id: userId,
+          scale: roomScale,
+          created_at: new Date().toISOString(),
+        });
+
+        if (error) throw error;
+        console.log('room scaled saved successfully');
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
   const handleSaveFurnitures = async () => {
     try {
@@ -16,6 +50,8 @@ const StoreFurnitureButton = () => {
       } = await supabase.auth.getUser();
 
       if (!user) return;
+
+      saveRoomScale(user.id);
 
       const { data: existingFurniture } = await supabase
         .from('furnitures')
