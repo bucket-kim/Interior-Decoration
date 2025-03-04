@@ -51,7 +51,8 @@ const R3F = () => {
     if (!roomGroupRef.current) return;
     const worldScale = new THREE.Vector3();
     roomGroupRef.current.getWorldScale(worldScale);
-    setRoomScale(worldScale.x);
+
+    setRoomScale(new THREE.Vector2(worldScale.x, worldScale.z));
   };
 
   useEffect(() => {
@@ -79,7 +80,7 @@ const R3F = () => {
         top
         name="Room_Geo"
         ref={roomGroupRef}
-        scale={roomScale}
+        scale={[roomScale.x, 5, roomScale.y]}
         receiveShadow
         castShadow
         position={[0, -0.25, 0]}

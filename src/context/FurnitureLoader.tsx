@@ -55,9 +55,11 @@ const FurnitureLoader = () => {
         .single();
 
       if (roomError && roomError.code !== 'PGRST116') throw roomError;
-      if (roomSettings && roomSettings.scale) {
-        setRoomScale(roomSettings.scale);
-        console.log('room scale loaded ', roomSettings.scale);
+      if (roomSettings) {
+        const scaleX = roomSettings.scale_x || 5;
+        const scaleZ = roomSettings.scale_z || 5;
+        setRoomScale(new THREE.Vector2(scaleX, scaleZ));
+        console.log('room scale loaded ', { x: scaleX, z: scaleZ });
       } else {
         console.log('No room setting found');
       }

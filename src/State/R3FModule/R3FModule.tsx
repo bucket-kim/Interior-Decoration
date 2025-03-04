@@ -9,8 +9,8 @@ const R3FModule = ({ set }: globalStateApiType) => {
       set({ meshClick: meshClick });
     },
 
-    roomScale: 5,
-    setRoomScale: (roomScale: number) => {
+    roomScale: new THREE.Vector2(5, 5),
+    setRoomScale: (roomScale: THREE.Vector2) => {
       set({ roomScale: roomScale });
     },
 

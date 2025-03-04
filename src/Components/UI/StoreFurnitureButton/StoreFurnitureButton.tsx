@@ -22,7 +22,8 @@ const StoreFurnitureButton = () => {
         const { error } = await supabase
           .from('room_settings')
           .update({
-            scale: roomScale,
+            scale_x: roomScale.x,
+            scale_z: roomScale.y,
             updated_at: new Date().toISOString(),
           })
           .eq('id', existingSetting.id);
@@ -31,7 +32,8 @@ const StoreFurnitureButton = () => {
       } else {
         const { error } = await supabase.from('room_settings').insert({
           user_id: userId,
-          scale: roomScale,
+          scale_x: roomScale.x,
+          scale_z: roomScale.y,
           created_at: new Date().toISOString(),
         });
 
