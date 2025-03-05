@@ -19,7 +19,7 @@ const Walls: FC<WallProps> = ({ wallRefX, wallRefZ }) => {
         position={[-0.5, 0.25, 0]}
       >
         <boxGeometry />
-        <meshStandardMaterial color={'#f1f1f1'} toneMapped={false} />
+        <meshStandardMaterial color={'#e1e1e1'} toneMapped={false} />
       </mesh>
 
       <mesh
@@ -32,7 +32,7 @@ const Walls: FC<WallProps> = ({ wallRefX, wallRefZ }) => {
         position={[0, 0.25, -0.5]}
       >
         <boxGeometry />
-        <meshStandardMaterial color={'#f1f1f1'} toneMapped={false} />
+        <meshStandardMaterial color={'#e1e1e1'} toneMapped={false} />
       </mesh>
     </Fragment>
   );

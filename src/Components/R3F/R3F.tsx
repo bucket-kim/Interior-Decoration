@@ -7,7 +7,6 @@ import { shallow } from 'zustand/shallow';
 import FurnitureLoader from '../../context/FurnitureLoader';
 import { useGlobalState } from '../../State/useGlobalState';
 import Controls from './Controls/Controls';
-import GridFloor from './GridFloor/GridFloor';
 import Lights from './Lights/Lights';
 import Mesh from './Mesh/Mesh';
 import RoomFloor from './Mesh/RoomFloor/RoomFloor';
@@ -91,7 +90,7 @@ const R3F = () => {
         </group>
       </Center>
       <Mesh state={state} interiorModels={interiorModels.scene} />
-      <GridFloor />
+      {/* <GridFloor /> */}
       <Controls
         state={state}
         modes={modes}
