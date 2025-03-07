@@ -124,7 +124,7 @@ const Mesh: FC<MeshProps> = ({ state, interiorModels }) => {
                       style={{
                         width: '3rem',
                         height: '3rem',
-                        background: 'skyblue',
+                        background: 'red',
                         margin: 'auto',
                         borderRadius: '50%',
                         display: 'flex',
