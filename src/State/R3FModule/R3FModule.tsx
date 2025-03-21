@@ -45,6 +45,11 @@ const R3FModule = ({ set }: globalStateApiType) => {
             : furniture,
         ),
       })),
+
+    areaLightPosition: new THREE.Vector3(-5, 4, 0),
+    updateAreaLightPosition: (position: THREE.Vector3) => {
+      set({ areaLightPosition: position.clone() });
+    },
   };
 };
 

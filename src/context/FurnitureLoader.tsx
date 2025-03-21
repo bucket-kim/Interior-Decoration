@@ -5,12 +5,14 @@ import { useGlobalState } from '../State/useGlobalState';
 import supabase from './Supabase/Supabase';
 
 const FurnitureLoader = () => {
-  const { setFurnitures, setRoomScale } = useGlobalState((state) => {
-    return {
-      setFurnitures: state.setFurnitures,
-      setRoomScale: state.setRoomScale,
-    };
-  }, shallow);
+  const { setFurnitures, setRoomScale, updateAreaLightPosition } =
+    useGlobalState((state) => {
+      return {
+        setFurnitures: state.setFurnitures,
+        setRoomScale: state.setRoomScale,
+        updateAreaLightPosition: state.updateAreaLightPosition,
+      };
+    }, shallow);
   const loadFurnitures = async (userId: string) => {
     try {
       const { data: furnituresData, error: furnitureError } = await supabase
@@ -59,7 +61,25 @@ const FurnitureLoader = () => {
         const scaleX = roomSettings.scale_x || 5;
         const scaleZ = roomSettings.scale_z || 5;
         setRoomScale(new THREE.Vector2(scaleX, scaleZ));
-        console.log('room scale loaded ', { x: scaleX, z: scaleZ });
+        // console.log('room scale loaded ', { x: scaleX, z: scaleZ });
+
+        if (
+          roomSettings.area_light_x !== undefined &&
+          roomSettings.area_light_y !== undefined &&
+          roomSettings.area_light_z !== undefined
+        ) {
+          const areaLightPos = new THREE.Vector3(
+            roomSettings.area_light_x,
+            roomSettings.area_light_y,
+            roomSettings.area_light_z,
+          );
+          updateAreaLightPosition(areaLightPos);
+          console.log('area light position loaded ', areaLightPos);
+        } else {
+          const defaultPosition = new THREE.Vector3(-5, 4, 0);
+          updateAreaLightPosition(defaultPosition);
+          console.log('area light default position ', defaultPosition);
+        }
       } else {
         console.log('No room setting found');
       }

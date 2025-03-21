@@ -1,5 +1,6 @@
 import { Center, useGLTF } from '@react-three/drei';
 import { Canvas } from '@react-three/fiber';
+import { useControls } from 'leva';
 import { useEffect, useRef } from 'react';
 import * as THREE from 'three';
 import { proxy } from 'valtio';
@@ -25,6 +26,7 @@ const R3F = () => {
   const roomGroupRef = useRef<THREE.Group>(null);
   const wallRefX = useRef<THREE.Mesh>(null);
   const wallRefZ = useRef<THREE.Mesh>(null);
+  const areaLightRef = useRef<THREE.Group>(null);
 
   const { setInteriorData, roomScale, setRoomScale, scaleRoomButtonClick } =
     useGlobalState((state) => {
@@ -63,9 +65,14 @@ const R3F = () => {
       : (state.current = null);
   }, [scaleRoomButtonClick]);
 
+  const fogControl = useControls({
+    near: { value: 15, min: 0, max: 200, step: 1 },
+    far: { value: 50, min: 0, max: 500, step: 1 },
+  });
+
   return (
     <Canvas
-      camera={{ position: [6, 5, 8], fov: 35 }}
+      camera={{ position: [8, 6, 10], fov: 35 }}
       dpr={[1, 2]}
       shadows
       gl={{
@@ -74,7 +81,8 @@ const R3F = () => {
         antialias: true,
       }}
     >
-      <Lights />
+      <color attach={'background'} args={['#b2b9bc']} />
+      <Lights areaLightRef={areaLightRef} />
       <FurnitureLoader />
       <Center
         top
@@ -97,6 +105,7 @@ const R3F = () => {
         state={state}
         modes={modes}
         roomRef={roomGroupRef}
+        areaLightRef={areaLightRef}
         wallRefX={wallRefX}
         wallRefZ={wallRefZ}
         onRoomScaleChange={handleRoomScaleChange}

@@ -3,12 +3,16 @@ import supabase from '../../../context/Supabase/Supabase';
 import { useGlobalState } from '../../../State/useGlobalState';
 
 const StoreFurnitureButton = () => {
-  const { furnitures, roomScale } = useGlobalState((state) => {
-    return {
-      furnitures: state.furnitures,
-      roomScale: state.roomScale,
-    };
-  }, shallow);
+  const { furnitures, roomScale, areaLightPosition } = useGlobalState(
+    (state) => {
+      return {
+        furnitures: state.furnitures,
+        roomScale: state.roomScale,
+        areaLightPosition: state.areaLightPosition,
+      };
+    },
+    shallow,
+  );
 
   const saveRoomScale = async (userId: string) => {
     try {
@@ -24,6 +28,10 @@ const StoreFurnitureButton = () => {
           .update({
             scale_x: roomScale.x,
             scale_z: roomScale.y,
+            // add area light position update
+            area_light_x: areaLightPosition.x,
+            area_light_y: areaLightPosition.y,
+            area_light_z: areaLightPosition.z,
             updated_at: new Date().toISOString(),
           })
           .eq('id', existingSetting.id);
@@ -34,6 +42,10 @@ const StoreFurnitureButton = () => {
           user_id: userId,
           scale_x: roomScale.x,
           scale_z: roomScale.y,
+          // area light insertion
+          area_light_x: areaLightPosition.x,
+          area_light_y: areaLightPosition.y,
+          area_light_z: areaLightPosition.z,
           created_at: new Date().toISOString(),
         });
 

@@ -13,6 +13,7 @@
     "@react-three/csg": "^3.2.0",
     "@react-three/drei": "^9.109.2",
     "@react-three/fiber": "^8.16.8",
+    "@react-three/postprocessing": "^3.0.4",
     "@supabase/auth-ui-react": "^0.4.7",
     "@supabase/auth-ui-shared": "^0.1.8",
     "@supabase/supabase-js": "^2.48.1",
@@ -20,6 +21,7 @@
     "firebase-tools": "^13.25.0",
     "gsap": "^3.12.5",
     "immer": "^10.1.1",
+    "lamina": "^1.1.23",
     "leva": "^0.10.0",
     "lucide-react": "^0.471.1",
     "react": "^18.3.1",
@@ -27,7 +29,7 @@
     "styled-components": "^6.1.12",
     "three": "^0.173.0",
     "valtio": "^2.1.2",
-    "vercel": "^41.3.1",
+    "vercel": "^41.4.1",
     "zustand": "^4.5.4"
   },
   "devDependencies": {

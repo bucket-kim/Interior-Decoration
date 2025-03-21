@@ -10,6 +10,7 @@ interface ControlsProps {
   state: any;
   modes: any;
   roomRef: RefObject<THREE.Group>;
+  areaLightRef: RefObject<THREE.Group>;
   wallRefX: RefObject<THREE.Mesh>;
   wallRefZ: RefObject<THREE.Mesh>;
   onRoomScaleChange?: () => void;
@@ -19,6 +20,7 @@ const Controls: FC<ControlsProps> = ({
   state,
   modes,
   roomRef,
+  areaLightRef,
   wallRefX,
   wallRefZ,
   onRoomScaleChange,
@@ -26,17 +28,62 @@ const Controls: FC<ControlsProps> = ({
   const snap = useSnapshot(state);
 
   const scene = useThree((state) => state.scene);
-  const { updateFurniturePosition, updateFurnitureRotation } = useGlobalState(
-    (state) => {
-      return {
-        updateFurniturePosition: state.updateFurniturePosition,
-        updateFurnitureRotation: state.updateFurnitureRotation,
-      };
-    },
-    shallow,
-  );
+  const {
+    updateFurniturePosition,
+    updateFurnitureRotation,
+    updateAreaLightPosition,
+  } = useGlobalState((state) => {
+    return {
+      updateFurniturePosition: state.updateFurniturePosition,
+      updateFurnitureRotation: state.updateFurnitureRotation,
+      updateAreaLightPosition: state.updateAreaLightPosition,
+    };
+  }, shallow);
 
   const transformRef = useRef<ElementRef<typeof TransformControls>>(null);
+
+  const initialRoomSizeRef = useRef<THREE.Vector3 | null>(null);
+  const initialLightPosRef = useRef<THREE.Vector3 | null>(null);
+  const initialLightScaleRef = useRef<THREE.Vector3 | null>(null);
+
+  // Store initial values on first render
+  useEffect(() => {
+    if (
+      roomRef.current &&
+      areaLightRef?.current &&
+      !initialRoomSizeRef.current
+    ) {
+      const roomBound = new THREE.Box3().setFromObject(roomRef.current);
+      initialRoomSizeRef.current = roomBound.getSize(new THREE.Vector3());
+      initialLightPosRef.current = areaLightRef.current.position.clone();
+      initialLightScaleRef.current = areaLightRef.current.scale.clone();
+    }
+  }, [roomRef, areaLightRef]);
+
+  const AreaLightPosControls = () => {
+    if (
+      !roomRef.current ||
+      !areaLightRef.current ||
+      !initialRoomSizeRef.current ||
+      !initialLightPosRef.current ||
+      !initialLightScaleRef.current
+    )
+      return;
+
+    const roomBound = new THREE.Box3().setFromObject(roomRef.current);
+    const roomSize = roomBound.getSize(new THREE.Vector3());
+
+    const scaleFactorX = roomSize.x / initialRoomSizeRef.current.x;
+    const scaleFactorZ = roomSize.z / initialRoomSizeRef.current.z;
+
+    const newPosX = initialLightPosRef.current.x * scaleFactorX;
+    const newScaleZ = initialLightScaleRef.current.z * scaleFactorZ;
+
+    areaLightRef.current.position.x = newPosX;
+    areaLightRef.current.scale.z = newScaleZ;
+
+    updateAreaLightPosition(areaLightRef.current.position.clone());
+  };
 
   useEffect(() => {
     if (!transformRef.current || !roomRef.current) return;
@@ -56,6 +103,10 @@ const Controls: FC<ControlsProps> = ({
 
       const roomBound = new THREE.Box3().setFromObject(roomRef.current);
       const roomSize = roomBound.getSize(new THREE.Vector3());
+
+      if (snap.current === 'Room_Geo' && areaLightRef.current) {
+        AreaLightPosControls();
+      }
 
       const objectBound = new THREE.Box3().setFromObject(object);
       const objectSize = objectBound.getSize(new THREE.Vector3());
@@ -106,8 +157,14 @@ const Controls: FC<ControlsProps> = ({
     if (!object) return;
 
     // Update both position and rotation in state
-    if (snap.current === 'Room_Geo' && onRoomScaleChange) {
-      onRoomScaleChange();
+    if (snap.current === 'Room_Geo') {
+      if (onRoomScaleChange) {
+        onRoomScaleChange();
+      }
+
+      if (areaLightRef.current) {
+        updateAreaLightPosition(areaLightRef.current.position.clone());
+      }
     } else {
       updateFurniturePosition(snap.current, object.position.clone());
       updateFurnitureRotation(
@@ -133,7 +190,12 @@ const Controls: FC<ControlsProps> = ({
           onMouseUp={handleTransformEnd}
         />
       )}
-      <OrbitControls makeDefault maxPolarAngle={Math.PI / 1.75} />
+      <OrbitControls
+        makeDefault
+        maxPolarAngle={Math.PI / 2}
+        maxDistance={20}
+        minDistance={5}
+      />
     </Fragment>
   );
 };

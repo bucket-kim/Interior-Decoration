@@ -28,4 +28,7 @@ export interface R3FModuleTypes {
     modelIndex: string,
     newRotation: THREE.Vector3,
   ) => void;
+
+  areaLightPosition: THREE.Vector3;
+  updateAreaLightPosition: (position: THREE.Vector3) => void;
 }
