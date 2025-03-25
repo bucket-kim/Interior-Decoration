@@ -55,6 +55,7 @@ const Mesh: FC<MeshProps> = ({ state, interiorModels }) => {
     const newModelMap: Record<string, THREE.Object3D> = {};
 
     (interiorModels as unknown as THREE.Group).traverse((child) => {
+      console.log(child.name);
       if (child instanceof THREE.Mesh) {
         newModelMap[child.name] = child;
       }
@@ -85,8 +86,11 @@ const Mesh: FC<MeshProps> = ({ state, interiorModels }) => {
       {furnitures && furnitures.length > 0
         ? furnitures.map((furniture, index) => {
             const model = modelMap[furniture.name] as THREE.Mesh;
-
             if (!model) return;
+
+            const boundingBox = new THREE.Box3().setFromObject(model);
+            const boxSize = boundingBox.getSize(new THREE.Vector3());
+
             return (
               <Center
                 receiveShadow
@@ -107,7 +111,7 @@ const Mesh: FC<MeshProps> = ({ state, interiorModels }) => {
                 onContextMenu={handleContextMenu}
                 onClick={handleFurnitureClick}
                 onPointerMissed={handlePointerMiss}
-                scale={0.5}
+                scale={1}
                 ref={(el: any) => {
                   furnitureRef.current[index] = el;
                 }}
@@ -116,7 +120,7 @@ const Mesh: FC<MeshProps> = ({ state, interiorModels }) => {
                   <Html
                     as="div"
                     style={{ fontFamily: 'sans-serif' }}
-                    position={[-2, 2, 0]}
+                    position={[-boxSize.x / 2 - 0.2, boxSize.y + 0.2, 0]}
                     center
                     prepend
                   >

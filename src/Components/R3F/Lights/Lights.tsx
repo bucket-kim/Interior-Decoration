@@ -1,6 +1,5 @@
 import { Environment, SoftShadows } from '@react-three/drei';
 import { Color, Depth, LayerMaterial } from 'lamina';
-import { useControls } from 'leva';
 import { FC, Fragment, RefObject, useEffect, useState } from 'react';
 import * as THREE from 'three';
 import { shallow } from 'zustand/shallow';
@@ -27,27 +26,6 @@ const Lights: FC<LightsProps> = ({ areaLightRef }) => {
   const [colorB, setColorB] = useState('#fffefa');
   // const [mainColor, setMainColor] = useState('#e2f6ff');
   const [mainColor, setMainColor] = useState('#c1efff');
-
-  const lightControls = useControls({
-    colorA: {
-      value: '#11b6f2',
-      onChange: (value) => {
-        setColorA(value);
-      },
-    },
-    colorB: {
-      value: '#fefff9',
-      onChange: (value) => {
-        setColorB(value);
-      },
-    },
-    mainColor: {
-      value: '#c1efff',
-      onChange: (value) => {
-        setMainColor(value);
-      },
-    },
-  });
 
   return (
     <Fragment>

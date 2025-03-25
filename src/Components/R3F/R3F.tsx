@@ -1,6 +1,5 @@
 import { Center, useGLTF } from '@react-three/drei';
 import { Canvas } from '@react-three/fiber';
-import { useControls } from 'leva';
 import { useEffect, useRef } from 'react';
 import * as THREE from 'three';
 import { proxy } from 'valtio';
@@ -38,7 +37,7 @@ const R3F = () => {
       };
     }, shallow);
 
-  const interiorModels = useGLTF('./Models/deco-interior-asset.glb', true);
+  const interiorModels = useGLTF('./Models/deco-interior-asset002.glb', true);
 
   useEffect(() => {
     interiorModels.scene.updateMatrixWorld(true);
@@ -64,11 +63,6 @@ const R3F = () => {
       ? (state.current = roomGroupRef.current.name)
       : (state.current = null);
   }, [scaleRoomButtonClick]);
-
-  const fogControl = useControls({
-    near: { value: 15, min: 0, max: 200, step: 1 },
-    far: { value: 50, min: 0, max: 500, step: 1 },
-  });
 
   return (
     <Canvas
