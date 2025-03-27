@@ -1,6 +1,7 @@
-import { Fragment, useState } from 'react';
+import { useState } from 'react';
 import { shallow } from 'zustand/shallow';
 import { useGlobalState } from '../../../State/useGlobalState';
+import Button from '../Buttons/Button';
 import FurnitureMenuStyleContainer from './FurnitureMenuStyleContainer';
 
 interface furnitureData {
@@ -68,21 +69,17 @@ const FurnitureMenu = () => {
 
   const furnitureCategory = categorizeFurniture();
 
-  // Get furniture items for the selected category or all categories if none selected
   const getDisplayedFurniture = () => {
     if (!menuState.isOpen || !menuState.showItems) {
       return [];
     }
 
-    // If no category is selected but menu is open, show featured items
     if (!menuState.selectedCategory) {
-      // Return a sample from each category for the main view
-      return Object.entries(furnitureCategory).flatMap(([category, items]) =>
+      return Object.entries(furnitureCategory).flatMap(([_, items]) =>
         items.length > 0 ? [items[0]] : [],
       );
     }
 
-    // Return items for the selected category
     return furnitureCategory[menuState.selectedCategory] || [];
   };
 
@@ -91,68 +88,69 @@ const FurnitureMenu = () => {
   return (
     <FurnitureMenuStyleContainer>
       {menuState.isOpen ? (
-        <Fragment>
-          <div className="furniture-categories">
-            <button
+        <div className="furniture-categories">
+          <div className="furniture-menu">
+            <div className="category-header">
+              <h3>{'Feature Futiture'}</h3>
+            </div>
+            <Button
+              name="X"
               onClick={() =>
                 setMenuState((prev) => ({
                   ...prev,
                   isOpen: false,
                 }))
               }
-            >
-              X
-            </button>
-            <div className="category-header">
-              <h3>{'Feature Futiture'}</h3>
-            </div>
-
-            <div className="category-buttons">
-              {Object.keys(FURNITURE_CATEGORIES).map((category) => (
-                <button
-                  key={category}
-                  onClick={() =>
-                    setMenuState((prev) => ({
-                      ...prev,
-                      selectedCategory:
-                        prev.selectedCategory === category ? null : category,
-                      showItems: prev.selectedCategory !== category,
-                    }))
-                  }
-                >
-                  {category}
-                </button>
-              ))}
-            </div>
+              width="2.25rem"
+            />
+          </div>
+          <div className="category-buttons">
+            {Object.keys(FURNITURE_CATEGORIES).map((category) => (
+              <Button
+                key={category}
+                onClick={() =>
+                  setMenuState((prev) => ({
+                    ...prev,
+                    selectedCategory:
+                      prev.selectedCategory === category ? null : category,
+                    showItems: prev.selectedCategory !== category,
+                  }))
+                }
+                name={category}
+              />
+            ))}
           </div>
           {menuState.showItems && (
-            <div className="furniture-items">
-              <h3>{menuState.selectedCategory}</h3>
-              {menuState.selectedCategory && (
-                <button
-                  onClick={() =>
-                    setMenuState((prev) => ({
-                      ...prev,
-                      selectedCategory: null,
-                      showItems: false,
-                    }))
-                  }
-                >
-                  {'<-'}
-                </button>
-              )}
+            <div className="item-category">
+              <div className="item-menu">
+                <div className="item-header">
+                  <h3>{menuState.selectedCategory}</h3>
+                </div>
+                {menuState.selectedCategory && (
+                  <Button
+                    name="<-"
+                    onClick={() =>
+                      setMenuState((prev) => ({
+                        ...prev,
+                        selectedCategory: null,
+                        showItems: false,
+                      }))
+                    }
+                    width="5rem"
+                  />
+                )}
+              </div>
               <div className="item-buttons">
                 {displayFurniture.map((data: furnitureData) => (
-                  <button
+                  <Button
                     key={data.name}
+                    name={data.name.replace('_geo', '')}
                     onClick={(e) => {
                       e.preventDefault();
                       const modelName = data.name as string;
                       addFurnitures(modelName);
                     }}
-                  >
-                    {data.name.replace('_geo', '')}
-                  </button>
+                  />
                 ))}
                 {displayFurniture.length === 0 && (
                   <p>No furniture items in this category</p>
@@ -160,19 +158,18 @@ const FurnitureMenu = () => {
               </div>
             </div>
           )}
-        </Fragment>
+        </div>
       ) : (
-        <div className="furniture-categories">
-          <button
+        <div className="furniture-button">
+          <Button
             onClick={() =>
               setMenuState((prev) => ({
                 ...prev,
                 isOpen: true,
               }))
             }
-          >
-            Furniture Menu
-          </button>
+            name={'Furniture Menu'}
+          />
         </div>
       )}
     </FurnitureMenuStyleContainer>

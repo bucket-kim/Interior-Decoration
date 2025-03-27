@@ -2345,10 +2345,10 @@
   resolved "https://registry.yarnpkg.com/@react-spring/types/-/types-9.6.1.tgz#913d3a68c5cbc1124fdb18eff919432f7b6abdde"
   integrity sha512-POu8Mk0hIU3lRXB3bGIGe4VHIwwDsQyoD1F394OK7STTiX9w4dG3cTLljjYswkQN+hDSHRrj4O36kuVa7KPU8Q==
 
-"@react-three/csg@^3.2.0":
-  version "3.2.0"
-  resolved "https://registry.yarnpkg.com/@react-three/csg/-/csg-3.2.0.tgz#bf212e9b957ccb83aa2743c540300f70291f8c79"
-  integrity sha512-POnakTYaJqmqKsk9Q23oCL78JmaitN2+s/ciOHDK8dQu6GsSa2eMzlhR7J7kI9VdjmV/cW2cRz9XJEWNJ4XmfA==
+"@react-three/csg@^4.0.0":
+  version "4.0.0"
+  resolved "https://registry.yarnpkg.com/@react-three/csg/-/csg-4.0.0.tgz#0bd180a0ea8d1eabbdf04b542532f3a3542e7f74"
+  integrity sha512-IMLKGINdyQEUfyg3CE1gYoH9lK5RDR90vhXG21vHyo2kVAuslTnsH9GTVat69YglvNqHoEIMExTGLdhzm5/ygQ==
   dependencies:
     three-bvh-csg "^0.0.16"
     three-mesh-bvh "^0.6.8"

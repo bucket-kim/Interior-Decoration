@@ -1,6 +1,6 @@
 import { Environment, SoftShadows } from '@react-three/drei';
 import { Color, Depth, LayerMaterial } from 'lamina';
-import { FC, Fragment, RefObject, useEffect, useState } from 'react';
+import { FC, Fragment, RefObject, useEffect } from 'react';
 import * as THREE from 'three';
 import { shallow } from 'zustand/shallow';
 import { useGlobalState } from '../../../State/useGlobalState';
@@ -21,11 +21,6 @@ const Lights: FC<LightsProps> = ({ areaLightRef }) => {
 
     areaLightRef.current.position.x = areaLightPosition.x;
   }, [areaLightPosition]);
-
-  const [colorA, setColorA] = useState('#11b6f2');
-  const [colorB, setColorB] = useState('#fffefa');
-  // const [mainColor, setMainColor] = useState('#e2f6ff');
-  const [mainColor, setMainColor] = useState('#c1efff');
 
   return (
     <Fragment>
@@ -61,10 +56,10 @@ const Lights: FC<LightsProps> = ({ areaLightRef }) => {
       <mesh scale={30} visible={true}>
         <sphereGeometry args={[1, 64, 64]} />
         <LayerMaterial side={THREE.BackSide} toneMapped={false}>
-          <Color color={mainColor} alpha={1} mode="normal" />
+          <Color color={'#c1efff'} alpha={1} mode="normal" />
           <Depth
-            colorA={colorA}
-            colorB={colorB}
+            colorA={'#11b6f2'}
+            colorB={'#fffefa'}
             alpha={0.5}
             mode="normal"
             near={0}

@@ -55,7 +55,6 @@ const Mesh: FC<MeshProps> = ({ state, interiorModels }) => {
     const newModelMap: Record<string, THREE.Object3D> = {};
 
     (interiorModels as unknown as THREE.Group).traverse((child) => {
-      console.log(child.name);
       if (child instanceof THREE.Mesh) {
         newModelMap[child.name] = child;
       }
@@ -96,7 +95,7 @@ const Mesh: FC<MeshProps> = ({ state, interiorModels }) => {
                 receiveShadow
                 castShadow
                 top
-                key={furniture.id}
+                key={furniture.id || `furniture-id-${index}`}
                 position={[
                   furniture.position.x,
                   furniture.position.y,
@@ -141,7 +140,6 @@ const Mesh: FC<MeshProps> = ({ state, interiorModels }) => {
                           (item) => item.id !== furniture.id,
                         );
                         setFurnitures(updatedFurnitures);
-                        console.log('id deleted ' + furniture.id);
                       }}
                     >
                       <h1 style={{ margin: '0', color: 'white' }}>X</h1>
@@ -153,7 +151,6 @@ const Mesh: FC<MeshProps> = ({ state, interiorModels }) => {
                   castShadow
                   receiveShadow
                   geometry={model.geometry}
-                  // scale={0.5}
                 >
                   <meshStandardMaterial />
                 </mesh>

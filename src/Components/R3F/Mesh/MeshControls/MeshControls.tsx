@@ -10,8 +10,16 @@ const useMeshControls = (
   const furnitureClick = (e: ThreeEvent<MouseEvent>) => {
     if (!furnitureRef.current) return;
     e.stopPropagation();
+
+    const objectName = e.object?.name;
+
+    if (!objectName) {
+      console.log('furniture click: object name not found');
+      return;
+    }
+
     const findFurniture = furnitureRef.current.find((furniture) => {
-      return furniture.name === e.object.name;
+      return furniture.name === objectName;
     });
 
     if (findFurniture) {

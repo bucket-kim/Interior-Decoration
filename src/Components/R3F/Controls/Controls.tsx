@@ -184,7 +184,11 @@ const Controls: FC<ControlsProps> = ({
         <TransformControls
           ref={transformRef}
           object={scene.getObjectByName(snap.current)}
-          mode={snap.current === 'Room_Geo' ? 'scale' : modes[snap.mode]}
+          mode={
+            snap.current === 'Room_Geo' || snap.current === 'wall_001'
+              ? 'scale'
+              : modes[snap.mode] || 'translate'
+          }
           rotationSnap={Math.PI / 4}
           showY={snap.current === 'Room_Geo' ? false : true}
           onMouseUp={handleTransformEnd}
